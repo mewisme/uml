@@ -11,15 +11,18 @@ A modern, intuitive desktop application for creating and editing UML diagrams wi
 
 ## ✨ Features
 
-- 🚀 Real-time UML diagram rendering and preview
-- 💻 Desktop-native performance with Tauri
-- 🎨 Modern UI with shadcn/ui components
-- 🌐 Cross-platform support (macOS, Windows, Linux)
-- 📝 Code-based UML editing with syntax highlighting
-- 🔄 Live preview updates
-- 💾 Local project management and storage
-- 🎯 Zoom and pan controls for diagram viewing
+- 🚀 Real-time UML diagram rendering with live preview
+- 📝 Code-based editing with PlantUML syntax highlighting and autocomplete
+- 🔍 Syntax linting and error detection
+- 📁 File explorer with drag & drop support
+- 💾 Local project management with SQLite storage
+- 🤖 AI-powered diagram explanation and optimization (OpenAI, Google, Anthropic, Megallm, Custom)
+- 📥 Export diagrams as PNG or copy to clipboard
+- 🪟 Separate preview window support
+- 🔎 Zoom and pan controls for diagram viewing
 - 🌙 Light/Dark theme support
+- 📐 Resizable panels for editor, preview, and AI features
+- 🌐 Cross-platform support (macOS, Windows, Linux)
 
 ## 🚀 Prerequisites
 
