@@ -2,7 +2,7 @@
 
 🔨 Other Changes
 
-- Update version lock and remove CHANGELOG; enhance README with new features ([81bdb0e](../../commit/81bdb0e))
+- Refactor AI feature structure and add chat support ([18a2d25](../../commit/18a2d25))
 
 
-📋 Full Changelog: [81bdb0e...81bdb0e](../../compare/81bdb0e...81bdb0e)
+📋 Full Changelog: [18a2d25...18a2d25](../../compare/18a2d25...18a2d25)
