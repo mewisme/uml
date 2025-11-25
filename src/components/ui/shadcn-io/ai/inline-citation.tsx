@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/hover-card';
 import { cn } from '@/lib/utils';
 import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
-import { type ComponentProps, useCallback, useEffect, useState, useRef, createContext, useContext } from 'react';
+import { type ComponentProps, useCallback, useEffect, useState, createContext, useContext } from 'react';
 
 
 const CarouselApiContext = createContext<CarouselApi | undefined>(undefined);

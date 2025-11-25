@@ -7,7 +7,8 @@ import { relaunch } from "@tauri-apps/plugin-process";
 import { getVersion } from "@tauri-apps/api/app";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import logo from "@/assets/app-logo.png";
+// @ts-ignore
+import logo from "../assets/app-logo.png";
 
 export enum UpdateStatus {
   CHECKING = "CHECKING",

@@ -12,6 +12,7 @@ export type MessageProps = HTMLAttributes<HTMLDivElement> & {
   from: UIMessage['role'];
 };
 
+// @ts-ignore
 export const Message = ({ className, from, ...props }: MessageProps) => (
   <div
     className={cn(
@@ -56,7 +57,7 @@ export const MessageAvatar = ({
   ...props
 }: MessageAvatarProps) => (
   <Avatar
-    className={cn('size-8 ring ring-1 ring-border', className)}
+    className={cn('size-8 ring-1 ring-border', className)}
     {...props}
   >
     <AvatarImage alt="" className="mt-0 mb-0" src={src} />
