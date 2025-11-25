@@ -1,0 +1,132 @@
+import "../styles/codemirror-lint.css";
+
+import CodeMirror, { ReactCodeMirrorRef } from "@uiw/react-codemirror";
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+
+import { EditorSelection } from "@codemirror/state";
+import { EditorView } from "@codemirror/view";
+import { githubLight } from "@uiw/codemirror-theme-github";
+import { lintGutter } from "@codemirror/lint";
+import { materialDark } from "@uiw/codemirror-theme-material";
+import { plantUML } from "../lib/codemirror/plantuml";
+import { useTheme } from "next-themes";
+
+interface UMLEditorPanelProps {
+  umlCode: string;
+  onChange: (value: string) => void;
+  onErrorCountChange?: (count: number) => void;
+}
+
+export interface UMLEditorPanelRef {
+  jumpToLine: (lineNumber: number) => void;
+}
+
+export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>(
+  ({ umlCode, onChange, onErrorCountChange }, ref) => {
+    const { theme } = useTheme();
+    const [editorTheme, setEditorTheme] = useState(githubLight);
+    const editorRef = useRef<ReactCodeMirrorRef>(null);
+    const [hasErrors, setHasErrors] = useState(false);
+
+    useEffect(() => {
+      setEditorTheme(theme === 'dark' ? materialDark : githubLight);
+    }, [theme]);
+
+
+    useEffect(() => {
+      if (!onErrorCountChange) return;
+
+
+      const lines = umlCode.split('\n');
+      let errorCount = 0;
+
+      const emptyMessageRegex = /^\s*(?:\d+\s+)?["\w\s]+?\s*<?-{1,2}>?\s*["\w\s]+?\s*:\s*$/;
+
+      for (const line of lines) {
+        if (emptyMessageRegex.test(line)) {
+          errorCount++;
+        }
+      }
+
+      setHasErrors(errorCount > 0);
+      onErrorCountChange(errorCount);
+    }, [umlCode, onErrorCountChange]);
+
+
+    const extensions = useMemo(() => {
+      const baseExtensions: any[] = [plantUML()];
+      if (hasErrors) {
+        baseExtensions.push(lintGutter());
+      }
+      return baseExtensions;
+    }, [hasErrors]);
+
+
+    useImperativeHandle(ref, () => ({
+      jumpToLine: (lineNumber: number) => {
+        const view = editorRef.current?.view;
+        if (!view) return;
+
+        try {
+
+          const line = view.state.doc.line(lineNumber);
+
+
+          const pos = line.from;
+
+
+
+          view.dispatch({
+            selection: EditorSelection.cursor(pos),
+            effects: EditorView.scrollIntoView(pos, {
+              y: 'center',
+              x: 'start',
+              yMargin: 50,
+              xMargin: 50
+            }),
+          });
+
+
+          view.focus();
+        } catch (error) {
+          console.error(`Failed to jump to line ${lineNumber}:`, error);
+        }
+      },
+    }), []);
+
+    return (
+      <CodeMirror
+        ref={editorRef}
+        value={umlCode}
+        height="100%"
+        onChange={onChange}
+        className="h-full"
+        theme={editorTheme}
+        extensions={extensions}
+        basicSetup={{
+          lineNumbers: true,
+          highlightActiveLineGutter: true,
+          highlightSpecialChars: true,
+          foldGutter: true,
+          drawSelection: true,
+          dropCursor: true,
+          allowMultipleSelections: true,
+          indentOnInput: true,
+          syntaxHighlighting: true,
+          bracketMatching: true,
+          closeBrackets: true,
+          autocompletion: true,
+          rectangularSelection: true,
+          crosshairCursor: true,
+          highlightActiveLine: true,
+          highlightSelectionMatches: true,
+          closeBracketsKeymap: true,
+          searchKeymap: true,
+          foldKeymap: true,
+          completionKeymap: true,
+          lintKeymap: true,
+        }}
+      />
+    );
+  }
+);
