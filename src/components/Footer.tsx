@@ -1,4 +1,4 @@
-import { AIFeatureDialog } from "./AIFeatureDialog";
+import { AIFeatureDialog } from "./ai/AIFeatureDialog";
 import { Github } from "lucide-react";
 import { PreviewUrlDialog } from "./PreviewUrlDialog";
 import { Switch } from "./ui/switch";

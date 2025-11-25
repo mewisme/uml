@@ -83,7 +83,7 @@ export function useBackground(): {
   }, []);
 
   useEffect(() => {
-    // re-read when theme changes to ensure previewUrl picks correct value
+
     readPreviewUrlFromStorage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [theme]);

@@ -147,7 +147,7 @@ export const WebPreviewUrl = ({
     onChange?.(event);
   };
 
-  // Use defaultValue for uncontrolled input when no onChange is provided
+
   if (!onChange && !value) {
     return (
       <Input

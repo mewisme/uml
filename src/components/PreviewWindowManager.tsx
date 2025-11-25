@@ -19,7 +19,7 @@ export function usePreviewWindow({
 }: PreviewWindowManagerProps) {
   const [previewWindow, setPreviewWindow] = useState<WebviewWindow | null>(null);
 
-  // Close any existing preview windows on mount
+
   useEffect(() => {
     const closeExistingPreviews = async () => {
       try {
@@ -37,7 +37,7 @@ export function usePreviewWindow({
     closeExistingPreviews();
   }, []);
 
-  // Clean up preview window when component unmounts
+
   useEffect(() => {
     return () => {
       if (previewWindow) {
@@ -54,7 +54,7 @@ export function usePreviewWindow({
         width: 800,
         height: 600,
         center: true,
-        // decorations: false
+
       });
 
       console.log("previewWindow", webview);
@@ -63,8 +63,8 @@ export function usePreviewWindow({
       onPreviewWindowChange(webview);
 
       webview.once("tauri://created", async function () {
-        // Send initial diagram data after window is created
-        // Wait a bit for the Preview component to set up its listener
+
+
         const encoded = encode(umlCode);
         setTimeout(async () => {
           try {
@@ -92,7 +92,7 @@ export function usePreviewWindow({
     }
   };
 
-  // Update preview window whenever SVG content changes
+
   useEffect(() => {
     if (!previewWindow || !svgContent) return;
     console.log("update-diagram (update)", svgContent);

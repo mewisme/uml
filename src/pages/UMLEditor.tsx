@@ -5,17 +5,18 @@ import {
 } from "../components/ui/resizable";
 import { UMLEditorPanel, UMLEditorPanelRef } from "../components/UMLEditorPanel";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useIsChatActive, useIsExplainActive, useIsOptimizeActive } from "@/stores/aiFeature";
 
 import { Explorer } from "@/features/Explorer";
+import { UMLChatPanel } from "@/components/ai/chat/UMLChatPanel";
 import { UMLEditorHeader } from "../components/UMLEditorHeader";
-import { UMLExtensionHeader } from "@/components/UMLExtensionHeader";
-import { UMLExtensionPanel } from "../components/UMLExtensionPanel";
+import { UMLExtensionHeader } from "@/components/ai/UMLExtensionHeader";
+import { UMLExtensionPanel } from "../components/ai/UMLExtensionPanel";
 import { UMLPreviewPanel } from "../components/UMLPreviewPanel";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { findMessageLine } from "../lib/uml-parser";
 import { invoke } from "@tauri-apps/api/core";
 import { toast } from "sonner";
-import { useAIFeatureStore } from "@/stores/aiFeature";
 import { useAIGenerator } from "@/hooks/useAIGenerator";
 import { useBackground } from "@/hooks/useBackground";
 import { useParams } from "react-router-dom";
@@ -34,13 +35,14 @@ export default function UMLEditor() {
   const editorRef = useRef<UMLEditorPanelRef>(null);
   const [errorCount, setErrorCount] = useState(0);
 
-  const isExplainActive = useAIFeatureStore((state) => state.isExplainActive);
-  const isOptimizeActive = useAIFeatureStore((state) => state.isOptimizeActive);
+  const isExplainActive = useIsExplainActive();
+  const isOptimizeActive = useIsOptimizeActive();
+  const isChatActive = useIsChatActive();
 
-  // Load explorer visibility state from localStorage
+
   const [isExplorerVisible, setIsExplorerVisible] = useState(() => {
     const saved = localStorage.getItem("explorerVisible");
-    return saved !== null ? saved === "true" : true; // Default to true if not set
+    return saved !== null ? saved === "true" : true;
   });
   const { aiProvider, aiApiKey, aiModel, aiBaseUrl, aiLanguage, aiStreamEnabled } = useBackground();
   const { umlCode, setUmlCode, svgContent } = useUMLDiagram({
@@ -58,7 +60,7 @@ export default function UMLEditor() {
     stream: aiStreamEnabled,
   });
 
-  // Load last opened file on mount
+
   useEffect(() => {
     const lastFile = localStorage.getItem("lastOpenedFile");
     if (lastFile) {
@@ -74,24 +76,20 @@ export default function UMLEditor() {
     }
   }, []);
 
-  // Persist currentFilePath to localStorage
+
   useEffect(() => {
     if (currentFilePath) {
       localStorage.setItem("lastOpenedFile", currentFilePath);
     }
   }, [currentFilePath]);
 
-  // Persist explorer visibility state
+
   useEffect(() => {
     localStorage.setItem("explorerVisible", String(isExplorerVisible));
   }, [isExplorerVisible]);
 
   const hasAIPanel = aiResult && (isExplainActive || isOptimizeActive);
   const editorDefaultSize = hasAIPanel ? 35 : editorSize;
-  const aiPanelDefaultSize = 30;
-  const previewDefaultSize = hasAIPanel
-    ? maxEditorSize - editorDefaultSize - aiPanelDefaultSize
-    : maxEditorSize - editorSize;
 
   const { previewWindow, openPreviewWindow } = usePreviewWindow({
     umlCode,
@@ -111,7 +109,7 @@ export default function UMLEditor() {
   }
 
   const handleFileSelect = useCallback(async (path: string, _content: string) => {
-    // Always read fresh content from file, ignore cached content
+
     try {
       const freshContent = await invoke<string>("read_file_content", { path });
       setCurrentFilePath(path);
@@ -122,7 +120,7 @@ export default function UMLEditor() {
     }
   }, [setUmlCode]);
 
-  // Handle message click from preview panel
+
   const handleMessageClick = useCallback((messageText: string, _from?: string, _to?: string, messageIndex?: number) => {
     if (messageIndex === undefined) {
       console.warn('No message index provided');
@@ -139,14 +137,9 @@ export default function UMLEditor() {
     }
   }, [umlCode]);
 
-  useEffect(() => {
-    console.log("aiPanelDefaultSize", aiPanelDefaultSize);
-    console.log("previewDefaultSize", previewDefaultSize);
-  }, [aiPanelDefaultSize, previewDefaultSize]);
-
   return (
     <div className="flex flex-col h-screen">
-      {/* Main Editor Area */}
+      { }
       <main className="uml-editor-page bg-[var(--background)] flex-1 relative">
         <ResizablePanelGroup
           direction="horizontal"
@@ -190,24 +183,36 @@ export default function UMLEditor() {
             </div>
           </ResizablePanel>
           <ResizableHandle withHandle />
-          {hasAIPanel && (
-            <>
-              <ResizablePanel defaultSize={30} minSize={20} maxSize={40}>
+          {
+            isChatActive ? (
+              <ResizablePanel defaultSize={maxEditorSize - editorSize} minSize={30}>
                 <div className="flex flex-col h-full">
-                  <UMLExtensionHeader onApplyOptimize={() => setUmlCode(aiResult)} />
-                  <UMLExtensionPanel result={aiResult} />
+                  <UMLExtensionHeader />
+                  <UMLChatPanel onApplyChanges={(content: string) => setUmlCode(content)} umlCode={umlCode} />
                 </div>
               </ResizablePanel>
-              <ResizableHandle withHandle />
-            </>
-          )}
-          <ResizablePanel defaultSize={hasAIPanel ? 50 : 70} minSize={20}>
-            <UMLPreviewPanel
-              svgContent={svgContent}
-              hidden={!!previewWindow}
-              onMessageClick={handleMessageClick}
-            />
-          </ResizablePanel>
+            ) :
+              hasAIPanel ? (
+                <>
+                  <ResizablePanel defaultSize={maxEditorSize - editorSize} minSize={30}>
+                    <div className="flex flex-col h-full">
+                      <UMLExtensionHeader onApplyOptimize={() => setUmlCode(aiResult || "")} />
+                      <UMLExtensionPanel result={aiResult} />
+                    </div>
+                  </ResizablePanel>
+                </>
+              ) : (
+                <ResizablePanel
+                  defaultSize={maxEditorSize - editorSize}
+                  minSize={30}
+                >
+                  <UMLPreviewPanel
+                    svgContent={svgContent}
+                    hidden={!!previewWindow}
+                    onMessageClick={handleMessageClick}
+                  />
+                </ResizablePanel>
+              )}
         </ResizablePanelGroup>
       </main>
     </div>

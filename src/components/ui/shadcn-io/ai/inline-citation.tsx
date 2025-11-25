@@ -16,10 +16,10 @@ import { cn } from '@/lib/utils';
 import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import { type ComponentProps, useCallback, useEffect, useState, useRef, createContext, useContext } from 'react';
 
-// Context to share carousel API with child components
+
 const CarouselApiContext = createContext<CarouselApi | undefined>(undefined);
 
-// Hook to access carousel API from the nearest InlineCitationCarousel parent
+
 const useCarouselApi = () => {
   const api = useContext(CarouselApiContext);
   return api;

@@ -1,6 +1,5 @@
 import { Category, UMLProject } from '@/databases/_types';
 
-// Sample Categories
 export const dummyCategories: Category[] = [
   {
     id: 'cat_1',
@@ -28,7 +27,7 @@ export const dummyCategories: Category[] = [
   }
 ];
 
-// Sample UML Projects
+
 const content = `@startuml
 title E-commerce System Architecture
 cloud "Frontend" {
@@ -99,7 +98,7 @@ export const dummyProjects: UMLProject[] = [
   }
 ];
 
-// Content Categories relationships
+
 export const dummyContentCategories = [
   { project_id: 'proj_1', category_id: 'cat_1' },
   { project_id: 'proj_2', category_id: 'cat_1' },

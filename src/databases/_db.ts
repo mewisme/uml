@@ -9,8 +9,8 @@ export async function getDB() {
 
 export async function initDB() {
   const db = await getDB();
-  
-  // Create UML Projects table
+
+
   await db.execute(`
     CREATE TABLE IF NOT EXISTS uml_projects (
       id TEXT PRIMARY KEY,
@@ -24,7 +24,7 @@ export async function initDB() {
     )
   `);
 
-  // Create Categories table with position field
+
   await db.execute(`
     CREATE TABLE IF NOT EXISTS categories (
       id TEXT PRIMARY KEY,
@@ -36,7 +36,7 @@ export async function initDB() {
     )
   `);
 
-  // Create Content Categories linking table
+
   await db.execute(`
     CREATE TABLE IF NOT EXISTS content_categories (
       project_id TEXT NOT NULL,
@@ -47,7 +47,7 @@ export async function initDB() {
     )
   `);
 
-  // Create indexes for better performance
+
   await db.execute(`
     CREATE INDEX IF NOT EXISTS idx_categories_position ON categories(position)
   `);

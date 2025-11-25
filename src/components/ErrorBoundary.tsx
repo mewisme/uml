@@ -1,5 +1,5 @@
-import React from 'react';
 import { Button } from './ui/button';
+import React from 'react';
 import { RefreshCw } from 'lucide-react';
 
 interface Props {
@@ -56,7 +56,7 @@ class ErrorBoundaryClass extends React.Component<Props, State> {
   }
 }
 
-// Function component wrapper
+
 export const ErrorBoundary = ({ children, fallback }: Props) => {
   return (
     <ErrorBoundaryClass fallback={fallback}>

@@ -32,11 +32,11 @@ export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>
       setEditorTheme(theme === 'dark' ? materialDark : githubLight);
     }, [theme]);
 
-    // Count errors in UML code whenever it changes
+
     useEffect(() => {
       if (!onErrorCountChange) return;
 
-      // Simple error detection - count lines with empty messages after colon
+
       const lines = umlCode.split('\n');
       let errorCount = 0;
 
@@ -52,7 +52,7 @@ export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>
       onErrorCountChange(errorCount);
     }, [umlCode, onErrorCountChange]);
 
-    // Conditionally include lintGutter only when there are errors
+
     const extensions = useMemo(() => {
       const baseExtensions: any[] = [plantUML()];
       if (hasErrors) {
@@ -61,21 +61,21 @@ export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>
       return baseExtensions;
     }, [hasErrors]);
 
-    // Expose jumpToLine method to parent via ref
+
     useImperativeHandle(ref, () => ({
       jumpToLine: (lineNumber: number) => {
         const view = editorRef.current?.view;
         if (!view) return;
 
         try {
-          // Get the line object for the target line number
+
           const line = view.state.doc.line(lineNumber);
 
-          // Set cursor at the beginning of the line
+
           const pos = line.from;
 
-          // Dispatch transaction to set selection and scroll into view
-          // Using both x and y to ensure horizontal scrolling works
+
+
           view.dispatch({
             selection: EditorSelection.cursor(pos),
             effects: EditorView.scrollIntoView(pos, {
@@ -86,7 +86,7 @@ export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>
             }),
           });
 
-          // Focus the editor
+
           view.focus();
         } catch (error) {
           console.error(`Failed to jump to line ${lineNumber}:`, error);

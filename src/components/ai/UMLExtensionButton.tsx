@@ -6,11 +6,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "./ui/alert-dialog";
+} from "../ui/alert-dialog";
 import { Brain, LoaderCircle, Sparkles } from "lucide-react";
+import { useIsExplainActive, useIsOptimizeActive } from "@/stores/aiFeature";
 
-import { Button } from "./ui/button";
-import { useAIFeatureStore } from "@/stores/aiFeature";
+import { Button } from "../ui/button";
 
 interface UMLExtensionButtonProps {
   onGenerate: () => void;
@@ -23,9 +23,8 @@ interface UMLExtensionButtonProps {
 }
 
 export function UMLExtensionButton({ onGenerate, isExplain, isOptimize, isLoading, errorMessage, showErrorDialog, onShowErrorDialog }: UMLExtensionButtonProps) {
-  const isExplainActive = useAIFeatureStore((state) => state.isExplainActive);
-  const isOptimizeActive = useAIFeatureStore((state) => state.isOptimizeActive);
-
+  const isExplainActive = useIsExplainActive();
+  const isOptimizeActive = useIsOptimizeActive();
   const shouldShowLoading = isLoading && ((isExplain && isExplainActive) || (isOptimize && isOptimizeActive));
 
   return (

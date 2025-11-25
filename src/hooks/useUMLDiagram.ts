@@ -40,7 +40,7 @@ root {
     debounceTimeout = window.setTimeout(async () => {
       const encoded = encode(changeBackground(isDarkBackground, umlCode));
 
-      // Generate SVG
+
       try {
         const url = `${previewUrl}svg/${encoded}`;
         console.log("URL", url);
@@ -54,7 +54,7 @@ root {
         toast.error("Failed to load UML diagram");
       }
 
-      // Autosave to file system if we have a file path
+
       if (filePath) {
         StatusBadge.loading(true);
         try {

@@ -1,12 +1,13 @@
 import { atom, useAtom } from 'jotai';
-import { Category } from '@/databases/_types';
-import { 
-  createCategory, 
-  deleteCategory, 
-  getAllCategories, 
-  reorderCategories, 
-  updateCategory 
+import {
+  createCategory,
+  deleteCategory,
+  getAllCategories,
+  reorderCategories,
+  updateCategory
 } from '@/databases/categories';
+
+import { Category } from '@/databases/_types';
 
 interface CategoryStore {
   categories: Category[];
@@ -22,25 +23,25 @@ interface CategoryStore {
   reorderCategoryList: (categoryIds: string[]) => Promise<void>;
 }
 
-// Base atom for categories
+
 const categoriesAtom = atom<Category[]>([]);
 const isLoadingAtom = atom(false);
 const isSuccessAtom = atom(false);
 
-// Action atoms
+
 const loadCategoriesAtom = atom(
   null,
   async (_, set) => {
-    // if (get(isLoadingAtom)) {
-    //   return;
-    // }
+
+
+
 
     console.log("loadCategoriesAtom");
 
     set(isLoadingAtom, true);
     set(isSuccessAtom, false);
     const categories = await getAllCategories();
-    
+
     if (!categories.find((c) => c.name === "Default")) {
       categories.unshift({
         id: "default",
@@ -71,7 +72,7 @@ const updateCategoryInStoreAtom = atom(
   null,
   (get, set, category: Category) => {
     const categories = get(categoriesAtom);
-    set(categoriesAtom, categories.map((c) => 
+    set(categoriesAtom, categories.map((c) =>
       c.id === category.id ? category : c
     ));
   }
@@ -100,7 +101,7 @@ const updateExistingCategoryAtom = atom(
   async (get, set, { id, updates }: { id: string; updates: Partial<Category> }) => {
     const updatedCategory = await updateCategory(id, updates);
     const categories = get(categoriesAtom);
-    set(categoriesAtom, categories.map((c) => 
+    set(categoriesAtom, categories.map((c) =>
       c.id === id ? updatedCategory : c
     ));
   }
@@ -124,7 +125,7 @@ const reorderCategoryListAtom = atom(
   }
 );
 
-// Hook to use the store
+
 export function useCategoryStore<T>(selector?: (state: CategoryStore) => T): T {
   const [categories] = useAtom(categoriesAtom);
   const [isLoading] = useAtom(isLoadingAtom);

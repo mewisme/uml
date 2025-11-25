@@ -61,21 +61,21 @@ export function VersionDisplay({ className }: { className?: string }) {
   };
 
   useEffect(() => {
-    // Get current version
+
     getVersion().then((currentVersion) => {
       setVersion(currentVersion);
       setUpdateInfo((prev) => ({ ...prev, currentVersion }));
     });
 
-    // Initial check
+
     checkForUpdates();
 
-    // Check periodically
-    const interval = setInterval(checkForUpdates, 1000 * 60 * 60); // Check every hour
+
+    const interval = setInterval(checkForUpdates, 1000 * 60 * 60);
     return () => clearInterval(interval);
   }, []);
 
-  // Check for updates when dialog opens
+
   useEffect(() => {
     if (showUpdateDialog) {
       checkForUpdates();
@@ -177,12 +177,12 @@ export function VersionDisplay({ className }: { className?: string }) {
       <Dialog open={showUpdateDialog} onOpenChange={setShowUpdateDialog}>
         <DialogContent className="w-[280px] rounded-xl bg-background backdrop-blur-sm [&>button]:text-foreground [&>button]:cursor-pointer [&>button:hover]:text-foreground/80">
           <div className="flex flex-col items-center gap-4 py-4">
-            {/* App Icon */}
+            { }
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
               <img src={logo} alt="UML Editor" className="w-full h-full object-contain" />
             </div>
 
-            {/* App Info */}
+            { }
             <div className="space-y-3 w-full">
               <div className="text-center space-y-0.5">
                 <h2 className="text-xl font-semibold text-foreground">UML Editor</h2>
@@ -194,12 +194,12 @@ export function VersionDisplay({ className }: { className?: string }) {
                 </p>
               </div>
 
-              {/* Status Message */}
+              { }
               <div className="text-xs text-foreground py-1.5">
                 {getStatusMessage()}
               </div>
 
-              {/* Update Progress */}
+              { }
               {isUpdating && (
                 <div className="space-y-1.5 px-3">
                   <Progress value={updateProgress} className="h-1" />
@@ -209,7 +209,7 @@ export function VersionDisplay({ className }: { className?: string }) {
                 </div>
               )}
 
-              {/* Action Buttons */}
+              { }
               {updateInfo.status === UpdateStatus.AVAILABLE && (
                 <div className="flex justify-center gap-2">
                   <Button
@@ -225,7 +225,7 @@ export function VersionDisplay({ className }: { className?: string }) {
               )}
             </div>
 
-            {/* Copyright */}
+            { }
             <div className="text-[10px] text-gray-500 text-center">
               © {new Date().getFullYear()} UML Editor. All rights reserved.
             </div>

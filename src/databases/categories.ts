@@ -1,7 +1,6 @@
-import { getDB } from "./_db";
 import { Category } from "./_types";
+import { getDB } from "./_db";
 
-// Create a new category
 export async function createCategory(
   name: string,
   description?: string,
@@ -11,7 +10,7 @@ export async function createCategory(
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
 
-  // If position is not provided, get the max position and add 1
+
   if (!position) {
     const result = await db.select<[{ max_position: number }]>(
       "SELECT COALESCE(MAX(position), 0) as max_position FROM categories"
@@ -45,7 +44,7 @@ export async function createCategory(
   return category;
 }
 
-// Update a category
+
 export async function updateCategory(
   id: string,
   updates: Partial<Category>
@@ -96,13 +95,13 @@ export async function updateCategory(
   return result[0];
 }
 
-// Delete a category
+
 export async function deleteCategory(id: string): Promise<void> {
   const db = await getDB();
   await db.execute("DELETE FROM categories WHERE id = $1", [id]);
 }
 
-// Get all categories
+
 export async function getAllCategories(): Promise<Category[]> {
   const db = await getDB();
   return await db.select<Category[]>(
@@ -110,7 +109,7 @@ export async function getAllCategories(): Promise<Category[]> {
   );
 }
 
-// Get category by ID
+
 export async function getCategoryById(id: string): Promise<Category | null> {
   const db = await getDB();
   const result = await db.select<Category[]>(
@@ -120,7 +119,7 @@ export async function getCategoryById(id: string): Promise<Category | null> {
   return result[0] || null;
 }
 
-// Add project to category
+
 export async function addProjectToCategory(
   projectId: string,
   categoryId: string
@@ -132,7 +131,7 @@ export async function addProjectToCategory(
   );
 }
 
-// Remove project from category
+
 export async function removeProjectFromCategory(
   projectId: string,
   categoryId: string
@@ -144,7 +143,7 @@ export async function removeProjectFromCategory(
   );
 }
 
-// Get categories for a project
+
 export async function getCategoriesForProject(
   projectId: string
 ): Promise<Category[]> {
@@ -160,15 +159,15 @@ export async function getCategoriesForProject(
   );
 }
 
-// Reorder categories
+
 export async function reorderCategories(categoryIds: string[]): Promise<void> {
   const db = await getDB();
 
-  // Start a transaction
+
   await db.execute("BEGIN TRANSACTION");
 
   try {
-    // Update positions
+
     for (let i = 0; i < categoryIds.length; i++) {
       await db.execute("UPDATE categories SET position = $1 WHERE id = $2", [
         i + 1,
@@ -176,10 +175,10 @@ export async function reorderCategories(categoryIds: string[]): Promise<void> {
       ]);
     }
 
-    // Commit the transaction
+
     await db.execute("COMMIT");
   } catch (error) {
-    // Rollback on error
+
     await db.execute("ROLLBACK");
     throw error;
   }

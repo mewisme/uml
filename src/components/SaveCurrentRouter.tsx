@@ -1,7 +1,8 @@
-import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useProjectStore } from "@/stores/project";
 import { getCachedRoute, setCacheRoute } from "@/lib/cache-route";
+import { useLocation, useNavigate } from "react-router-dom";
+
+import { useEffect } from "react";
+import { useProjectStore } from "@/stores/project";
 
 export default function SaveCurrentRouter() {
   const { pathname } = useLocation();
@@ -21,7 +22,7 @@ export default function SaveCurrentRouter() {
       return;
     }
 
-    // If we're at the root path, check for cached route and redirect
+
     if (pathname === "/") {
       const cachedRoute = getCachedRoute();
       if (cachedRoute) {
@@ -33,9 +34,9 @@ export default function SaveCurrentRouter() {
       return;
     }
 
-    // If the current path matches /uml/:umlId pattern, cache it
+
     if (pathname.startsWith("/uml/")) {
-      // localStorage.setItem(CACHED_ROUTE_KEY, pathname);
+
       setCacheRoute(pathname)
     }
   }, [pathname, navigate, projects]);

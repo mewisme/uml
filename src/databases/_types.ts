@@ -9,7 +9,7 @@ export interface Project {
   type: string | null;
 }
 
-// Alias for backward compatibility
+
 export type UMLProject = Project;
 
 export interface Category {

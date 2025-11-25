@@ -1,9 +1,8 @@
-import { getDB } from "./_db";
 import { UMLProject } from "./_types";
+import { getDB } from "./_db";
 
-// Generate random string of 4-6 characters
 const generateRandomString = () => {
-  const length = Math.floor(Math.random() * 3) + 4; // Random length between 4-6
+  const length = Math.floor(Math.random() * 3) + 4;
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
   return Array.from(
     { length },
@@ -14,7 +13,7 @@ const generateRandomString = () => {
 export function detectUMLType(content: string): string {
   const lowerContent = content.toLowerCase();
 
-  // Check for specific UML diagram keywords
+
   if (lowerContent.includes("@startuml")) {
     if (
       lowerContent.includes("class ") ||
@@ -130,7 +129,7 @@ export async function updateProject(
   const db = await getDB();
   const now = new Date().toISOString();
 
-  // If content is updated, automatically detect and update the type
+
   if (updates.content !== undefined) {
     const detectedType = detectUMLType(updates.content);
     await db.execute(

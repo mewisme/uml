@@ -37,7 +37,7 @@ export function PreviewUrlDialog() {
       if (l === "") localStorage.removeItem(LS_KEY_LIGHT);
       else localStorage.setItem(LS_KEY_LIGHT, l);
 
-      // notify others in same window (storage event doesn't fire in same window)
+
       window.dispatchEvent(new Event("previewUrlChange"));
     } catch (e) {
       // eslint-disable-next-line no-console

@@ -1,11 +1,9 @@
-import { AI_PROVIDER_CONFIG, Language } from "@/lib/ai/providers";
 import { explainSystemPrompt, optimizeSystemPrompt } from "@/lib/ai/prompts";
 import { generateText, streamText } from "ai";
 import { useCallback, useState } from "react";
 
-import { createAnthropic } from "@ai-sdk/anthropic";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { createOpenAI } from "@ai-sdk/openai";
+import { Language } from "@/lib/ai/providers";
+import { useAIModel } from "./useAIModel";
 
 interface UseAIGeneratorProps {
   umlCode: string;
@@ -37,45 +35,21 @@ export function useAIGenerator({
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
-  const getModel = useCallback(() => {
-    const baseConfig = {
-      apiKey: aiApiKey,
-    };
-
-    switch (aiProvider) {
-      case "openai": {
-        const provider = createOpenAI(baseConfig);
-        return provider(aiModel);
-      }
-      case "google": {
-        const provider = createGoogleGenerativeAI(baseConfig);
-        return provider(aiModel);
-      }
-      case "anthropic": {
-        const provider = createAnthropic(baseConfig);
-        return provider(aiModel);
-      }
-      case "megallm":
-      case "custom": {
-        const customProvider = createOpenAI({
-          ...baseConfig,
-          baseURL: aiBaseUrl || AI_PROVIDER_CONFIG[aiProvider].baseUrl,
-        });
-        return customProvider(aiModel);
-      }
-      default:
-        throw new Error(`Unsupported AI provider: ${aiProvider}`);
-    }
-  }, [aiProvider, aiApiKey, aiModel, aiBaseUrl]);
+  const model = useAIModel(aiProvider, aiApiKey, aiModel, aiBaseUrl);
 
   const generate = useCallback(({ isExplain, isOptimize }: { isExplain?: boolean; isOptimize?: boolean }): void => {
     setIsLoading(true);
     setError(null);
     setResult(null);
 
+    if (!model) {
+      setError(new Error("AI model not found"));
+      setIsLoading(false);
+      return;
+    }
+
     (async () => {
       try {
-        const model = getModel();
         const systemPrompt = isExplain ? explainSystemPrompt(language) : isOptimize ? optimizeSystemPrompt(language) : "";
 
         if (stream) {
@@ -112,7 +86,7 @@ export function useAIGenerator({
         setIsLoading(false);
       }
     })();
-  }, [umlCode, language, getModel, stream]);
+  }, [umlCode, language, model, stream]);
 
   return {
     generate,

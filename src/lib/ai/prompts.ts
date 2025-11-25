@@ -17,3 +17,12 @@ export const optimizeSystemPrompt = (language: Language): string => {
         Optimize the diagram for performance, readability, and maintainability.
         Return only the optimized diagram without any markdown formatting or additional text.`;
 }
+
+export const chatSystemPrompt = (language: Language, umlCode?: string): string => {
+  let lang = language === 'en' ? 'English' : 'Vietnamese';
+  return `
+        You are an expert in PlantUML diagrams and ${lang}.
+        You are given a PlantUML diagram and your task is to chat with the user about the diagram.
+        ${umlCode ? `The diagram is: ${umlCode}` : ""}
+        Return only the chat with markdown formatting.`;
+}

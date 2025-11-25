@@ -1,11 +1,12 @@
-import { atom, useAtom } from "jotai";
-import { ContentCategory } from "@/databases/_types";
 import {
-  getAllDiagramInCategory,
   addDiagramToCategory,
-  updateDiagramCategory,
+  getAllDiagramInCategory,
   removeDiagramFromCategory,
+  updateDiagramCategory,
 } from "@/databases/contentCategory";
+import { atom, useAtom } from "jotai";
+
+import { ContentCategory } from "@/databases/_types";
 
 interface ContentCategoryStore {
   contentCategories: ContentCategory[];
@@ -26,16 +27,16 @@ interface ContentCategoryStore {
   ) => Promise<void>;
 }
 
-// Base atom for categories
+
 const contentCategoriesAtom = atom<ContentCategory[]>([]);
 
 const loadingContentCategoriesAtom = atom(false);
 const successContentCategoriesAtom = atom(false);
 
-// Action atoms
+
 const loadContentCategoriesAtom = atom(null, async (get, set) => {
   const isLoading = get(loadingContentCategoriesAtom);
-  
+
   if (isLoading) {
     return;
   }
@@ -103,7 +104,7 @@ const removeDiagramFromCategoryAtom = atom(
   }
 );
 
-// Hook to use the store
+
 export function useContentCategoryStore<T>(
   selector?: (state: ContentCategoryStore) => T
 ): T {

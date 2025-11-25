@@ -15,11 +15,11 @@ export default function DiagramSortableItem({
   const { attributes, listeners, setNodeRef, transition, isDragging, isOver } =
     useSortable({ id });
 
-  // console.log("transform", overIndex, transform, transition);
+
 
   const style = {
     opacity: isDragging ? 0.5 : 1,
-    // transform: CSS.Transform.toString(transform),
+
     transition,
   };
 

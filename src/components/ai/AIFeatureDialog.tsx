@@ -1,13 +1,13 @@
 import * as React from "react";
 
 import { AI_PROVIDER_CONFIG, LS_KEY_AI_API_KEY, LS_KEY_AI_BASE_URL, LS_KEY_AI_LANGUAGE, LS_KEY_AI_MODEL, LS_KEY_AI_PROVIDER, LS_KEY_AI_STREAM_ENABLED } from "@/lib/ai/providers";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import { Settings2Icon } from "lucide-react";
-import { Switch } from "./ui/switch";
+import { Switch } from "../ui/switch";
 
 const KEYS_AI_PROVIDER = Object.keys(AI_PROVIDER_CONFIG);
 
@@ -19,7 +19,7 @@ export function AIFeatureDialog() {
   const [language, setLanguage] = React.useState<string>("");
   const [streamEnabled, setStreamEnabled] = React.useState<boolean>(false);
 
-  React.useEffect(() => {
+  const readAiSettingsFromStorage = React.useCallback(() => {
     if (typeof window === "undefined") return;
     try {
       setAiProvider(localStorage.getItem(LS_KEY_AI_PROVIDER) ?? "openai");
@@ -33,6 +33,19 @@ export function AIFeatureDialog() {
       console.error("AIFeatureDialog: failed to read AI settings from localStorage", e);
     }
   }, []);
+
+  React.useEffect(() => {
+    readAiSettingsFromStorage();
+
+
+    const onAiSettingsChange = () => readAiSettingsFromStorage();
+
+    window.addEventListener("aiSettingsChange", onAiSettingsChange as EventListener);
+
+    return () => {
+      window.removeEventListener("aiSettingsChange", onAiSettingsChange as EventListener);
+    };
+  }, [readAiSettingsFromStorage]);
 
   const save = () => {
     if (typeof window === "undefined") return;
@@ -61,7 +74,7 @@ export function AIFeatureDialog() {
       if (streamEnabled) localStorage.setItem(LS_KEY_AI_STREAM_ENABLED, "true");
       else localStorage.removeItem(LS_KEY_AI_STREAM_ENABLED);
 
-      // notify others in same window (storage event doesn't fire in same window)
+
       window.dispatchEvent(new Event("aiSettingsChange"));
     } catch (e) {
       // eslint-disable-next-line no-console

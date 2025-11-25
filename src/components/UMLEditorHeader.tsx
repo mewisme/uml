@@ -1,12 +1,14 @@
 import { AlertCircle, ExternalLink, File, PanelLeft } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useSetChatActive, useSetExplainActive, useSetOptimizeActive } from "@/stores/aiFeature";
 
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { DiagramActionsDropdown } from "./DiagramActionsDropdown";
-import { UMLExtensionButton } from "./UMLExtensionButton";
+import { Separator } from "./ui/separator";
+import { UMLChatButton } from "./ai/chat/UMLChatButton";
+import { UMLExtensionButton } from "./ai/UMLExtensionButton";
 import { cn } from "../lib/utils";
-import { useAIFeatureStore } from "@/stores/aiFeature";
 import { useBackground } from "../hooks/useBackground";
 
 interface UMLEditorHeaderProps {
@@ -42,8 +44,9 @@ export function UMLEditorHeader({
   const { editorBackground, aiProvider, aiApiKey, aiModel, aiBaseUrl, aiLanguage } = useBackground();
   const [errorMessage, setErrorMessage] = useState("");
   const [showErrorDialog, setShowErrorDialog] = useState(false);
-  const setExplainActive = useAIFeatureStore((state) => state.setExplainActive);
-  const setOptimizeActive = useAIFeatureStore((state) => state.setOptimizeActive);
+  const setExplainActive = useSetExplainActive();
+  const setOptimizeActive = useSetOptimizeActive();
+  const setChatActive = useSetChatActive();
 
   function onGenerateAI({ isExplain, isOptimize }: OnGenerateProps) {
     const missingFields: string[] = [];
@@ -93,7 +96,7 @@ export function UMLEditorHeader({
     }
   }, [aiError]);
 
-  // Extract filename from path
+
   const filename = currentFilePath
     ? currentFilePath.split(/[/\\]/).pop()
     : "No file selected";
@@ -103,7 +106,7 @@ export function UMLEditorHeader({
       style={{
         backgroundColor: editorBackground
       }} >
-      {/* Filename on the left with toggle button when explorer is hidden */}
+      { }
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         {isExplorerVisible ? (
           <File size={14} className="opacity-70" />
@@ -120,7 +123,7 @@ export function UMLEditorHeader({
         )}
         <span className="font-medium">{filename}</span>
 
-        {/* Error count badge */}
+        { }
         {errorCount > 0 && (
           <Badge variant="destructive" className="h-5 px-1.5 text-xs flex items-center gap-1">
             <AlertCircle size={12} />
@@ -129,12 +132,13 @@ export function UMLEditorHeader({
         )}
       </div>
 
-      {/* Actions on the right */}
+      { }
       <div className="flex items-center gap-1">
         <UMLExtensionButton
           onGenerate={() => {
             setExplainActive(true);
             setOptimizeActive(false);
+            setChatActive(false);
             onGenerateAI({ isExplain: true });
           }}
           isExplain={true}
@@ -147,6 +151,7 @@ export function UMLEditorHeader({
           onGenerate={() => {
             setOptimizeActive(true);
             setExplainActive(false);
+            setChatActive(false);
             onGenerateAI({ isOptimize: true });
           }}
           isOptimize={true}
@@ -155,6 +160,12 @@ export function UMLEditorHeader({
           showErrorDialog={showErrorDialog}
           onShowErrorDialog={() => setShowErrorDialog(false)}
         />
+        <UMLChatButton
+          errorMessage={errorMessage}
+          showErrorDialog={showErrorDialog}
+          onShowErrorDialog={() => setShowErrorDialog(false)}
+        />
+        <Separator orientation="vertical" />
         <Button
           variant="ghost"
           size="icon"

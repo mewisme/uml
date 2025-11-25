@@ -1,9 +1,10 @@
-import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { Maximize2, ZoomIn, ZoomOut } from "lucide-react";
 import {
-  TransformWrapper,
   TransformComponent,
+  TransformWrapper,
   useControls,
 } from "react-zoom-pan-pinch";
+
 import { Button } from "./ui/button";
 import { ErrorBoundary } from "./ErrorBoundary";
 
@@ -15,13 +16,13 @@ interface ZoomableViewProps {
   initialScale?: number;
 }
 
-// Separate component for controls to ensure useControls is used within context
+
 function Controls() {
   const { zoomIn, zoomOut, resetTransform, centerView } = useControls();
 
   const handleReset = () => {
     resetTransform();
-    centerView(1, 0); // Reset to scale 1 and center
+    centerView(1, 0);
   };
 
   return (
@@ -60,7 +61,7 @@ function ZoomableViewContent({
         alignmentAnimation={{ disabled: true }}
         centerZoomedOut={false}
       >
-        {/* Controls must be inside TransformWrapper to access context */}
+        { }
         <Controls />
         <TransformComponent
           wrapperClass="!w-full !h-full"

@@ -1,28 +1,28 @@
-import "../styles/codemirror-lint.css";
+import "../../styles/codemirror-lint.css";
 
 import CodeMirror, { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useIsExplainActive, useIsOptimizeActive } from "@/stores/aiFeature";
 
-import { Response } from "./ui/shadcn-io/ai/response";
+import { Response } from "../ui/shadcn-io/ai/response";
 import { githubLight } from "@uiw/codemirror-theme-github";
 import { lintGutter } from "@codemirror/lint";
 import { materialDark } from "@uiw/codemirror-theme-material";
-import { plantUML } from "../lib/codemirror/plantuml";
-import { useAIFeatureStore } from "@/stores/aiFeature";
+import { plantUML } from "../../lib/codemirror/plantuml";
 import { useBackground } from "@/hooks/useBackground";
 import { useTheme } from "next-themes";
 
 interface UMLExtensionPanelProps {
-  result: string;
+  result?: string | null;
 }
 
-export function UMLExtensionPanel({ result }: UMLExtensionPanelProps) {
+export function UMLExtensionPanel({ result = undefined }: UMLExtensionPanelProps) {
   const { theme } = useTheme();
   const { editorBackground } = useBackground();
   const [editorTheme, setEditorTheme] = useState(githubLight);
   const editorRef = useRef<ReactCodeMirrorRef>(null);
-  const isExplainActive = useAIFeatureStore((state) => state.isExplainActive);
-  const isOptimizeActive = useAIFeatureStore((state) => state.isOptimizeActive);
+  const isExplainActive = useIsExplainActive();
+  const isOptimizeActive = useIsOptimizeActive();
 
   useEffect(() => {
     setEditorTheme(theme === 'dark' ? materialDark : githubLight);
@@ -41,12 +41,12 @@ export function UMLExtensionPanel({ result }: UMLExtensionPanelProps) {
           allowedImagePrefixes={["*"]}
           allowedLinkPrefixes={["*"]}
         >
-          {result}
+          {result ?? ""}
         </Response>
       )}
       {isOptimizeActive && !isExplainActive && <CodeMirror
         ref={editorRef}
-        value={result}
+        value={result ?? ""}
         height="100%"
         className="h-full"
         readOnly={true}

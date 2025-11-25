@@ -2,7 +2,7 @@ export type StatusType = "info" | "success" | "error";
 
 export class StatusBadge {
   private static readonly BADGE_ID = "status-badge";
-  private static readonly HIDE_DELAY = 500; // 3 seconds
+  private static readonly HIDE_DELAY = 500;
 
   static loading(status: boolean, delay: number = this.HIDE_DELAY) {
     const badge = document.getElementById(this.BADGE_ID);
