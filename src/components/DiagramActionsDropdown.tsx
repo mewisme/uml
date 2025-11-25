@@ -1,0 +1,105 @@
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { ImageDown, Images, MoreVertical } from "lucide-react";
+
+import { Button } from "./ui/button";
+import { Image as TauriImage } from "@tauri-apps/api/image";
+import { encode } from 'plantuml-encoder';
+import { save } from "@tauri-apps/plugin-dialog";
+import { toast } from "sonner";
+import { useBackground } from "@/hooks/useBackground";
+import { writeFile } from "@tauri-apps/plugin-fs";
+import { writeImage } from '@tauri-apps/plugin-clipboard-manager';
+
+interface ExportActionsDropdownProps {
+  umlCode: string;
+  projectName: string;
+}
+
+export function DiagramActionsDropdown({
+  umlCode,
+  projectName,
+}: ExportActionsDropdownProps) {
+  const { previewUrl } = useBackground();
+  const handleDownloadPNG = async () => {
+    if (!umlCode) {
+      toast.error('No diagram to download');
+      return;
+    }
+
+    try {
+      const encoded = encode(umlCode);
+      const res = await fetch(`${previewUrl}png/${encoded}`);
+      const imageBlob = await res.blob();
+      const imageData = await imageBlob.arrayBuffer();
+      const uint8Array = new Uint8Array(imageData);
+
+      const filePath = await save({
+        defaultPath: `${projectName || 'diagram'}.png`,
+        filters: [{
+          name: 'Image',
+          extensions: ['png']
+        }]
+      });
+
+      if (filePath) {
+        await writeFile(filePath, uint8Array);
+        toast.success('Diagram downloaded successfully!');
+      }
+    } catch (error) {
+      console.error('Error downloading diagram:', error);
+      toast.error('Failed to download diagram');
+    }
+  };
+
+  const handleCopyToClipboard = async () => {
+    if (!umlCode) {
+      toast.error('No diagram to copy');
+      return;
+    }
+
+    try {
+      const encoded = encode(umlCode);
+      const res = await fetch(`${previewUrl}png/${encoded}`);
+      const imageBlob = await res.blob();
+      const imageData = await imageBlob.arrayBuffer();
+      const uint8Array = new Uint8Array(imageData);
+
+      const image = await TauriImage.fromBytes(uint8Array);
+      await writeImage(image);
+
+      toast.success('Diagram copied to clipboard!');
+    } catch (error) {
+      console.error('Error copying diagram to clipboard:', error);
+      toast.error('Failed to copy diagram to clipboard');
+    }
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 focus-visible:ring-0 focus-visible:ring-offset-0"
+        >
+          <MoreVertical size={14} />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-[200px]">
+        <DropdownMenuItem className="cursor-pointer" onClick={handleDownloadPNG}>
+          <ImageDown className="h-4 w-4 mr-2" />
+          Download as image
+        </DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer" onClick={handleCopyToClipboard}>
+          <Images className="h-4 w-4 mr-2" />
+          Copy as Image
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+} 
