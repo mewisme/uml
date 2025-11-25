@@ -1,4 +1,4 @@
-name: 'publish'
+name: "publish"
 
 on:
   workflow_dispatch:
@@ -6,8 +6,8 @@ on:
     branches:
       - main
     paths:
-      - 'src-tauri/**'
-      - 'src/**'
+      - "src-tauri/**"
+      - "src/**"
 
 jobs:
   publish-tauri:
@@ -17,18 +17,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: 'macos-latest' # for Arm based macs (M1 and above)
-            args: '--target aarch64-apple-darwin'
+          - platform: "macos-latest" # for Arm based macs (M1 and above)
+            args: "--target aarch64-apple-darwin"
           # - platform: 'macos-latest' # for Intel based macs
           #   args: '--target x86_64-apple-darwin'
-          - platform: 'windows-latest'
-            args: ''
+          - platform: "windows-latest"
+            args: ""
 
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history for changelog generation
+          fetch-depth: 0 # Fetch all history for changelog generation
 
       - name: Setup node
         uses: actions/setup-node@v4
@@ -62,7 +62,7 @@ jobs:
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
-          workspaces: './src-tauri -> target'
+          workspaces: "./src-tauri -> target"
 
       - name: Install frontend dependencies
         run: pnpm install
@@ -80,7 +80,6 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       # End ----------------------------------
-
       # Update Tauri pubkey start ----------------------------------
       - name: Update Tauri pubkey
         env:
@@ -99,20 +98,18 @@ jobs:
           echo "$CHANGELOG_CONTENT" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
       # End ----------------------------------
-
-
       # Build and upload release
       - uses: tauri-apps/tauri-action@v0
         name: Build and upload release
         id: tauri_build
         timeout-minutes: 30
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           tagName: v${{ env.VERSION }}
-          releaseName: 'v${{ env.VERSION }}'
+          releaseName: "v${{ env.VERSION }}"
           releaseBody: ${{ env.CHANGELOG }}
           releaseDraft: true
           prerelease: false

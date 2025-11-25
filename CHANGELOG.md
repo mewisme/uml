@@ -2,7 +2,8 @@
 
 🔨 Other Changes
 
-- Refactor AI feature structure and add chat support ([18a2d25](../../commit/18a2d25))
+- Add @shikijs/transformers and fix minor ts issues ([c933155](../../commit/c933155))
+- Add AI config management and settings UI ([abef78f](../../commit/abef78f))
 
 
-📋 Full Changelog: [18a2d25...18a2d25](../../compare/18a2d25...18a2d25)
+📋 Full Changelog: [abef78f...c933155](../../compare/abef78f...c933155)
