@@ -1,6 +1,6 @@
 [package]
 name = "uml-editor"
-version = "0.0.1"
+version = "0.0.2"
 description = "Simple plantuml editor"
 edition = "2021"
 
@@ -27,6 +27,7 @@ tauri-plugin-fs = "2"
 tauri-plugin-process = "2"
 tauri-plugin-clipboard-manager = "2"
 tauri-plugin-http = "2"
+tauri-plugin-shell = "2"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-updater = "2"

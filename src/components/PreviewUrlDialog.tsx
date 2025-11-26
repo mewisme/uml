@@ -42,7 +42,7 @@ export function PreviewUrlDialog({ open, onOpenChange }: PreviewUrlDialogProps) 
     };
   }, [readPreviewUrlsFromStorage]);
 
-  // Load settings when dialog opens
+
   React.useEffect(() => {
     if (open) {
       readPreviewUrlsFromStorage();

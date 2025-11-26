@@ -50,7 +50,7 @@ export function AIFeatureDialog({ open, onOpenChange }: AIFeatureDialogProps) {
     };
   }, [readAiSettingsFromStorage]);
 
-  // Load settings when dialog opens
+
   React.useEffect(() => {
     if (open) {
       readAiSettingsFromStorage();

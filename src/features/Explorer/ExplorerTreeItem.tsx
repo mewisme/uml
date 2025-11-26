@@ -7,12 +7,15 @@ import {
   Folder,
   FolderOpen,
   FolderPlus,
+  GitBranch,
+  RefreshCcw,
   Trash2,
 } from "lucide-react";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
+  ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 
@@ -31,6 +34,9 @@ interface ExplorerTreeItemProps {
   onFileClick: (entry: FileEntry) => void;
   onCreateFile: (path: string) => void;
   onCreateFolder: (path: string) => void;
+  onInitGitRepo: (path: string) => void;
+  onRevealInFileManager: (path: string) => void;
+  onReload: (path: string) => void;
   onRename: (path: string, name: string) => void;
   onDelete: (path: string) => void;
   onMouseEnter: (path: string) => void;
@@ -46,6 +52,9 @@ export function ExplorerTreeItem({
   onFileClick,
   onCreateFile,
   onCreateFolder,
+  onInitGitRepo,
+  onRevealInFileManager,
+  onReload,
   onRename,
   onDelete,
   onMouseEnter,
@@ -63,7 +72,7 @@ export function ExplorerTreeItem({
               <div
                 className={cn(
                   "group flex items-center justify-between py-0.5 px-2 cursor-pointer text-sm select-none transition-colors",
-                  isSelected ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+                  isSelected ? "bg-black/70 text-white" : "hover:bg-accent/50"
                 )}
                 style={{ paddingLeft: `${depth * 12 + 8}px` }}
                 onClick={() => onFileClick(entry)}
@@ -78,7 +87,7 @@ export function ExplorerTreeItem({
                       <span className="w-[14px]" />
                     )}
                   </span>
-                  <span className="mr-2 text-accent-foreground">
+                  <span className="mr-2 text-indigo-900">
                     {entry.is_dir ? (
                       isExpanded ? <FolderOpen size={14} /> : <Folder size={14} />
                     ) : (
@@ -126,8 +135,23 @@ export function ExplorerTreeItem({
                   <ContextMenuItem onClick={() => onCreateFolder(entry.path)}>
                     <FolderPlus size={14} className="mr-2" /> New Folder
                   </ContextMenuItem>
+                  <ContextMenuSeparator />
                 </>
               )}
+              {!entry.is_git_repo && (
+                <>
+                  <ContextMenuItem onClick={() => onInitGitRepo(entry.path)}>
+                    <GitBranch size={14} className="mr-2" /> Initialize Git
+                  </ContextMenuItem>
+                </>
+              )}
+              <ContextMenuItem onClick={() => onReload(entry.path)}>
+                <RefreshCcw size={14} className="mr-2" /> Refresh
+              </ContextMenuItem>
+              <ContextMenuItem onClick={() => onRevealInFileManager(entry.path)}>
+                <FolderOpen size={14} className="mr-2" /> Reveal in Explorer
+              </ContextMenuItem>
+              <ContextMenuSeparator />
               <ContextMenuItem onClick={() => onRename(entry.path, entry.name)}>
                 <Edit2 size={14} className="mr-2" /> Rename
               </ContextMenuItem>
@@ -152,6 +176,9 @@ export function ExplorerTreeItem({
               onFileClick={onFileClick}
               onCreateFile={onCreateFile}
               onCreateFolder={onCreateFolder}
+              onInitGitRepo={onInitGitRepo}
+              onRevealInFileManager={onRevealInFileManager}
+              onReload={onReload}
               onRename={onRename}
               onDelete={onDelete}
               onMouseEnter={onMouseEnter}

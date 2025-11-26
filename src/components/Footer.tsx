@@ -1,17 +1,21 @@
+import { BranchSelector } from "./BranchSelector";
 import { Github } from "lucide-react";
 import { SettingsDialog } from "./SettingsDialog";
 import { Switch } from "./ui/switch";
 import { VersionDisplay } from "./VersionDisplay";
+import { useExplorerRootPath } from "@/stores/explorer";
 import { useTheme } from "next-themes";
 
 export function Footer() {
   const { setTheme, theme } = useTheme();
+  const [rootPath] = useExplorerRootPath();
 
   return (
     <footer className="flex items-center justify-between px-2 py-1 gap-2 border-t border-[var(--color-border)] relative">
       <div className="flex items-center gap-4">
         <VersionDisplay />
         <SettingsDialog />
+        {rootPath && <BranchSelector workingDir={rootPath} />}
       </div>
 
       <div className="flex items-center gap-4">

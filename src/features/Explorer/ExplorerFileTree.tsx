@@ -1,8 +1,11 @@
+import { useEffect, useState } from "react";
+
 import { ExplorerTreeItem } from "./ExplorerTreeItem";
 import { FileEntry } from "./types";
 
 interface ExplorerFileTreeProps {
   rootPath: string;
+  isGitRepo: boolean;
   files: FileEntry[];
   selectedPath: string | null;
   expandedPaths: Set<string>;
@@ -10,6 +13,9 @@ interface ExplorerFileTreeProps {
   onFileClick: (entry: FileEntry) => void;
   onCreateFile: (path: string) => void;
   onCreateFolder: (path: string) => void;
+  onInitGitRepo: (path: string) => void;
+  onRevealInFileManager: (path: string) => void;
+  onReload: (path: string) => void;
   onRename: (path: string, name: string) => void;
   onDelete: (path: string) => void;
   onMouseEnter: (path: string) => void;
@@ -18,6 +24,7 @@ interface ExplorerFileTreeProps {
 
 export function ExplorerFileTree({
   rootPath,
+  isGitRepo,
   files,
   selectedPath,
   expandedPaths,
@@ -25,18 +32,32 @@ export function ExplorerFileTree({
   onFileClick,
   onCreateFile,
   onCreateFolder,
+  onInitGitRepo,
+  onRevealInFileManager,
+  onReload,
   onRename,
   onDelete,
   onMouseEnter,
   onMouseLeave,
 }: ExplorerFileTreeProps) {
 
-  const rootEntry: FileEntry = {
-    name: rootPath.split(/[/\\]/).pop() || rootPath,
-    path: rootPath,
-    is_dir: true,
-    children: files,
-  };
+  const [rootEntry, setRootEntry] = useState<FileEntry | null>(null);
+
+  useEffect(() => {
+    const rootEntry: FileEntry = {
+      name: rootPath.split(/[/\\]/).pop() || rootPath,
+      path: rootPath,
+      is_dir: true,
+      children: files,
+      is_git_repo: isGitRepo,
+    };
+    setRootEntry(rootEntry);
+  }, [rootPath, files, isGitRepo]);
+
+
+  if (!rootEntry) {
+    return null;
+  }
 
   return (
     <div className="flex-1 overflow-auto">
@@ -50,6 +71,9 @@ export function ExplorerFileTree({
           onFileClick={onFileClick}
           onCreateFile={onCreateFile}
           onCreateFolder={onCreateFolder}
+          onInitGitRepo={onInitGitRepo}
+          onRevealInFileManager={onRevealInFileManager}
+          onReload={onReload}
           onRename={onRename}
           onDelete={onDelete}
           onMouseEnter={onMouseEnter}
