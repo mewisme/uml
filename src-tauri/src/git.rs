@@ -1,9 +1,13 @@
+use std::os::windows::process::CommandExt;
 use std::process::Command;
 use tauri::command;
+
+const CREATE_NO_WINDOW: u32 = 0x08000000;
 
 #[command]
 pub fn get_current_branch(working_dir: String) -> Result<String, String> {
     let output = Command::new("git")
+        .creation_flags(CREATE_NO_WINDOW)
         .current_dir(&working_dir)
         .args(["branch", "--show-current"])
         .output()
@@ -21,6 +25,7 @@ pub fn get_current_branch(working_dir: String) -> Result<String, String> {
 #[command]
 pub fn get_all_branches(working_dir: String) -> Result<Vec<String>, String> {
     let output = Command::new("git")
+        .creation_flags(CREATE_NO_WINDOW)
         .current_dir(&working_dir)
         .args(["branch", "--list"])
         .output()
@@ -45,6 +50,7 @@ pub fn get_all_branches(working_dir: String) -> Result<Vec<String>, String> {
 #[command]
 pub fn switch_branch(working_dir: String, branch: String) -> Result<String, String> {
     let output = Command::new("git")
+        .creation_flags(CREATE_NO_WINDOW)
         .current_dir(&working_dir)
         .args(["checkout", &branch])
         .output()
@@ -62,6 +68,7 @@ pub fn get_git_status(
     working_dir: String,
 ) -> Result<std::collections::HashMap<String, String>, String> {
     let output = Command::new("git")
+        .creation_flags(CREATE_NO_WINDOW)
         .current_dir(&working_dir)
         .args(["status", "--short", "--porcelain"])
         .output()
@@ -110,6 +117,7 @@ pub fn get_git_status(
 #[command]
 pub fn is_git_repo(working_dir: String) -> Result<bool, String> {
     let output = Command::new("git")
+        .creation_flags(CREATE_NO_WINDOW)
         .current_dir(&working_dir)
         .args(["rev-parse", "--is-inside-work-tree"])
         .output()
@@ -127,6 +135,7 @@ pub fn is_git_repo(working_dir: String) -> Result<bool, String> {
 #[command]
 pub fn init_git_repo(working_dir: String) -> Result<bool, String> {
     let output = Command::new("git")
+        .creation_flags(CREATE_NO_WINDOW)
         .current_dir(&working_dir)
         .args(["init"])
         .output()
