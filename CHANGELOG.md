@@ -1,12 +1,12 @@
 ## What's Changed
 
-✨ Features
+🐛 Bug Fixes
 
-- Add @tauri-apps/plugin-shell and enhance Explorer functionality ([da275ac](../../commit/da275ac))
+- Add CREATE_NO_WINDOW flag to hide window on Windows ([e196108](../../commit/e196108))
 
 🔨 Other Changes
 
-- Update version ([e5021da](../../commit/e5021da))
+- Update version to 0.1.0 and modify changelog ([88c5185](../../commit/88c5185))
 
 
-📋 Full Changelog: [e5021da...da275ac](../../compare/e5021da...da275ac)
+📋 Full Changelog: [88c5185...e196108](../../compare/88c5185...e196108)
