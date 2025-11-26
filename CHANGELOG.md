@@ -1,9 +1,12 @@
 ## What's Changed
 
+✨ Features
+
+- Add @tauri-apps/plugin-shell and enhance Explorer functionality ([da275ac](../../commit/da275ac))
+
 🔨 Other Changes
 
-- Adjust editor height calculation ([64753c3](../../commit/64753c3))
-- Upgrade version ([a0847cd](../../commit/a0847cd))
+- Update version ([e5021da](../../commit/e5021da))
 
 
-📋 Full Changelog: [a0847cd...64753c3](../../compare/a0847cd...64753c3)
+📋 Full Changelog: [e5021da...da275ac](../../compare/e5021da...da275ac)
