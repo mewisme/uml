@@ -20,8 +20,7 @@ function App() {
   const [isDBReady, setIsDBReady] = useState(false);
   const loadProjects = useProjectStore(state => state.loadProjects);
   const loadContentCategories = useContentCategoryStore(state => state.loadData);
-  const loadCategories = useCategoryStore(state => state.loadCategories)
-
+  const loadCategories = useCategoryStore(state => state.loadCategories);
 
   useEffect(() => {
 

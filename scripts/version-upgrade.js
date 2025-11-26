@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
+import { dirname, join } from 'path';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+
 import { execSync } from 'child_process';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -51,7 +51,7 @@ function saveLastProcessedCommit() {
 // Get commits since last processed commit
 function getNewCommits() {
   const lastProcessedCommit = getLastProcessedCommit();
-  
+
   try {
     if (lastProcessedCommit) {
       // Get commits since last processed commit, excluding the last processed commit itself
@@ -105,7 +105,7 @@ function analyzeCommits(commits) {
   let tempMajor = major;
   let tempMinor = minor;
   let tempPatch = patch;
-  
+
   console.log('\nAnalyzing commits with potential version changes:');
   commits.forEach(commit => {
     const lowerCommit = commit.toLowerCase();
@@ -115,7 +115,7 @@ function analyzeCommits(commits) {
     if (lowerCommit.startsWith('skip') || lowerCommit.includes('bump new version') || lowerCommit.includes('skip:')) {
       return;
     }
-    
+
     // Check for breaking changes - highest priority
     if (lowerCommit.includes('breaking change') || lowerCommit.includes('!:')) {
       commitBumpType = 'major';
@@ -128,7 +128,7 @@ function analyzeCommits(commits) {
     }
     // Check for features - medium priority
     else if (
-      lowerCommit.startsWith('feat:') || 
+      lowerCommit.startsWith('feat:') ||
       lowerCommit.startsWith('feature:') ||
       featureVerbs.some(verb => firstWord === verb)
     ) {
@@ -157,9 +157,10 @@ function analyzeCommits(commits) {
     }
     // Default to patch for unmatched commit types
     else {
-      commitBumpType = 'patch';
-      tempPatch++;
-      highestBumpType = 'patch';
+      // commitBumpType = 'patch';
+      // tempPatch++;
+      // highestBumpType = 'patch';
+      commitBumpType = 'none';
     }
     console.log(`- ${commit} (${commitBumpType}: v${tempMajor}.${tempMinor}.${tempPatch})`);
   });
@@ -177,7 +178,7 @@ function analyzeCommits(commits) {
 // Update version based on commit analysis
 function updateVersion() {
   const commits = getNewCommits();
-  
+
   if (commits.length === 0) {
     console.log('No new commits to analyze');
     return null;
@@ -208,6 +209,10 @@ function updateVersion() {
 
   const newVersion = `${newMajor}.${newMinor}.${newPatch}`;
   console.log(`\nFinal version change: ${currentVersion} → ${newVersion}`);
+  if (newVersion === currentVersion) {
+    console.log('No version bump needed, skipping...');
+    process.exit(0);
+  }
   return newVersion;
 }
 
@@ -218,13 +223,13 @@ if (newVersion) {
   // Update package.json
   packageJson.version = newVersion;
   writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
-  
+
   // Update Tauri config version
   updateTauriConfig(newVersion);
-  
+
   // Save the current commit as last processed
   saveLastProcessedCommit();
-  
+
   console.log(`Version upgraded to ${newVersion}`);
   console.log('Last processed commit saved to .version-lock');
 } 

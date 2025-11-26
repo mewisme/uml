@@ -25,7 +25,7 @@
     "core:window:allow-minimize",
     "core:window:allow-start-dragging",
     "core:window:allow-toggle-maximize",
-    "opener:allow-open-url",
+    "opener:default",
     {
       "identifier": "http:default",
       "allow": [

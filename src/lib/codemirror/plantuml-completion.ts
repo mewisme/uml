@@ -1,4 +1,4 @@
-import { CompletionContext, CompletionResult, Completion, snippet } from '@codemirror/autocomplete';
+import { Completion, CompletionContext, CompletionResult, snippet } from '@codemirror/autocomplete';
 
 const keywords = [
   'actor',

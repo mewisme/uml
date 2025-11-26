@@ -1,6 +1,5 @@
-import { AIFeatureDialog } from "./ai/AIFeatureDialog";
 import { Github } from "lucide-react";
-import { PreviewUrlDialog } from "./PreviewUrlDialog";
+import { SettingsDialog } from "./SettingsDialog";
 import { Switch } from "./ui/switch";
 import { VersionDisplay } from "./VersionDisplay";
 import { useTheme } from "next-themes";
@@ -12,8 +11,7 @@ export function Footer() {
     <footer className="flex items-center justify-between px-2 py-1 gap-2 border-t border-[var(--color-border)] relative">
       <div className="flex items-center gap-4">
         <VersionDisplay />
-        <PreviewUrlDialog />
-        <AIFeatureDialog />
+        <SettingsDialog />
       </div>
 
       <div className="flex items-center gap-4">

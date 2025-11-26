@@ -1,15 +1,13 @@
 import { AlertCircle, ExternalLink, File, PanelLeft } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useSetChatActive, useSetExplainActive, useSetOptimizeActive } from "@/stores/aiFeature";
 
+import { AIActionsDropdown } from "./ai/AIActionsDropdown";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { DiagramActionsDropdown } from "./DiagramActionsDropdown";
-import { Separator } from "./ui/separator";
-import { UMLChatButton } from "./ai/chat/UMLChatButton";
-import { UMLExtensionButton } from "./ai/UMLExtensionButton";
 import { cn } from "../lib/utils";
+import { toast } from "sonner";
 import { useBackground } from "../hooks/useBackground";
+import { useEffect } from "react";
 
 interface UMLEditorHeaderProps {
   projectName: string;
@@ -42,57 +40,31 @@ export function UMLEditorHeader({
   aiError,
 }: UMLEditorHeaderProps) {
   const { editorBackground, aiProvider, aiApiKey, aiModel, aiBaseUrl, aiLanguage } = useBackground();
-  const [errorMessage, setErrorMessage] = useState("");
-  const [showErrorDialog, setShowErrorDialog] = useState(false);
-  const setExplainActive = useSetExplainActive();
-  const setOptimizeActive = useSetOptimizeActive();
-  const setChatActive = useSetChatActive();
 
   function onGenerateAI({ isExplain, isOptimize }: OnGenerateProps) {
-    const missingFields: string[] = [];
 
-    if (!aiProvider || aiProvider.trim() === "") {
-      missingFields.push("AI Provider");
-    }
-    if (!aiApiKey || aiApiKey.trim() === "") {
-      missingFields.push("AI API Key");
-    }
-    if (!aiModel || aiModel.trim() === "") {
-      missingFields.push("AI Model");
-    }
-    if ((aiProvider === "custom" || aiProvider === "megallm") && (!aiBaseUrl || aiBaseUrl.trim() === "")) {
-      missingFields.push("AI Base URL");
-    }
-    if (!aiLanguage) {
-      missingFields.push("AI Language");
+    if (
+      !aiProvider || aiProvider.trim() === ""
+      || !aiApiKey || aiApiKey.trim() === ""
+      || !aiModel || aiModel.trim() === ""
+      || ((aiProvider === "custom" || aiProvider === "megallm") && (!aiBaseUrl || aiBaseUrl.trim() === ""))
+      || !aiLanguage
+    ) {
+      toast.error("AI Settings Required", {
+        description: "Please go to Settings and fill all required AI fields to use this feature.",
+      });
+      return;
     }
 
-    if (missingFields.length > 0) {
-      const fieldDescriptions: Record<string, string> = {
-        "AI Provider": "Please select an AI provider (OpenAI, Google, Anthropic, etc.)",
-        "AI API Key": "Please enter your API key to authenticate with the AI service",
-        "AI Model": "Please select a model to use for generating explanations",
-        "AI Base URL": "Please enter the base URL for the custom AI provider",
-        "AI Language": "Please select a language for the explanation",
-      };
-
-      const details = missingFields
-        .map((field) => `• ${field}: ${fieldDescriptions[field] || "Required field is missing"}`)
-        .join("\n");
-
-      setErrorMessage(
-        `The following required fields are missing:\n\n${details}\n\nPlease configure these settings before using the explain feature.`
-      );
-      setShowErrorDialog(true);
-    } else {
-      onGenerate({ isExplain, isOptimize });
-    }
+    onGenerate({ isExplain, isOptimize });
   }
 
   useEffect(() => {
     if (aiError) {
-      setErrorMessage(`Error generating AI feature: ${aiError.message}. Please check your API key and try again.`);
-      setShowErrorDialog(true);
+      const message = `Error generating AI feature: ${aiError.message}. Please check your API key and try again.`;
+      toast.error("Error Generating AI Feature", {
+        description: message,
+      });
     }
   }, [aiError]);
 
@@ -134,38 +106,11 @@ export function UMLEditorHeader({
 
       { }
       <div className="flex items-center gap-1">
-        <UMLExtensionButton
-          onGenerate={() => {
-            setExplainActive(true);
-            setOptimizeActive(false);
-            setChatActive(false);
-            onGenerateAI({ isExplain: true });
-          }}
-          isExplain={true}
-          isLoading={isAILoading}
-          errorMessage={errorMessage}
-          showErrorDialog={showErrorDialog}
-          onShowErrorDialog={() => setShowErrorDialog(false)}
+        <AIActionsDropdown
+          onGenerateAI={onGenerateAI}
+          isAILoading={isAILoading}
         />
-        <UMLExtensionButton
-          onGenerate={() => {
-            setOptimizeActive(true);
-            setExplainActive(false);
-            setChatActive(false);
-            onGenerateAI({ isOptimize: true });
-          }}
-          isOptimize={true}
-          isLoading={isAILoading}
-          errorMessage={errorMessage}
-          showErrorDialog={showErrorDialog}
-          onShowErrorDialog={() => setShowErrorDialog(false)}
-        />
-        <UMLChatButton
-          errorMessage={errorMessage}
-          showErrorDialog={showErrorDialog}
-          onShowErrorDialog={() => setShowErrorDialog(false)}
-        />
-        <Separator orientation="vertical" />
+
         <Button
           variant="ghost"
           size="icon"

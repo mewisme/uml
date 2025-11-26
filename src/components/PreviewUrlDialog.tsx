@@ -1,19 +1,23 @@
 import * as React from "react";
 
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Settings2Icon } from "lucide-react";
 
 const LS_KEY_DARK = "previewUrlDark";
 const LS_KEY_LIGHT = "previewUrlLight";
 
-export function PreviewUrlDialog() {
+interface PreviewUrlDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export function PreviewUrlDialog({ open, onOpenChange }: PreviewUrlDialogProps) {
   const [darkUrl, setDarkUrl] = React.useState<string>("");
   const [lightUrl, setLightUrl] = React.useState<string>("");
 
-  React.useEffect(() => {
+  const readPreviewUrlsFromStorage = React.useCallback(() => {
     if (typeof window === "undefined") return;
     try {
       const d = localStorage.getItem(LS_KEY_DARK) ?? "";
@@ -26,6 +30,25 @@ export function PreviewUrlDialog() {
     }
   }, []);
 
+  React.useEffect(() => {
+    readPreviewUrlsFromStorage();
+
+    const onPreviewUrlChange = () => readPreviewUrlsFromStorage();
+
+    window.addEventListener("previewUrlChange", onPreviewUrlChange as EventListener);
+
+    return () => {
+      window.removeEventListener("previewUrlChange", onPreviewUrlChange as EventListener);
+    };
+  }, [readPreviewUrlsFromStorage]);
+
+  // Load settings when dialog opens
+  React.useEffect(() => {
+    if (open) {
+      readPreviewUrlsFromStorage();
+    }
+  }, [open, readPreviewUrlsFromStorage]);
+
   const save = () => {
     if (typeof window === "undefined") return;
     const d = darkUrl.trim();
@@ -37,8 +60,8 @@ export function PreviewUrlDialog() {
       if (l === "") localStorage.removeItem(LS_KEY_LIGHT);
       else localStorage.setItem(LS_KEY_LIGHT, l);
 
-
       window.dispatchEvent(new Event("previewUrlChange"));
+      onOpenChange(false);
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error("PreviewUrlDialog: failed to save preview urls", e);
@@ -46,16 +69,7 @@ export function PreviewUrlDialog() {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <div
-          className="flex cursor-pointer items-center gap-1 text-xs hover:bg-primary/10 px-1 py-0.5 rounded"
-        >
-          <Settings2Icon size={10} />
-          Preview URLs
-        </div>
-      </DialogTrigger>
-
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Custom preview URLs</DialogTitle>
@@ -75,9 +89,7 @@ export function PreviewUrlDialog() {
             <Button variant="ghost" size="sm">Cancel</Button>
           </DialogClose>
 
-          <DialogClose asChild>
-            <Button size="sm" onClick={save}>Save</Button>
-          </DialogClose>
+          <Button size="sm" onClick={save}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

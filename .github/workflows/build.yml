@@ -17,10 +17,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: "macos-latest" # for Arm based macs (M1 and above)
+          - platform: "macos-latest"
             args: "--target aarch64-apple-darwin"
-          # - platform: 'macos-latest' # for Intel based macs
-          #   args: '--target x86_64-apple-darwin'
           - platform: "windows-latest"
             args: ""
 
@@ -28,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetch all history for changelog generation
+          fetch-depth: 0
 
       - name: Setup node
         uses: actions/setup-node@v4
@@ -69,7 +67,6 @@ jobs:
 
       - name: Generate app version from package.json
         id: get_version
-        # if: matrix.platform == 'macos-latest'
         shell: bash
         run: |
           VERSION=$(node -p "require('./package.json').version")
@@ -79,27 +76,57 @@ jobs:
 
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-      # End ----------------------------------
-      # Update Tauri pubkey start ----------------------------------
+
+      - name: Check if release or tag exists
+        id: check_release
+        shell: bash
+        run: |
+          VERSION="v${{ env.VERSION }}"
+          echo "Checking for existing tag/release: $VERSION"
+
+          # Check tag exists
+          if git rev-parse "$VERSION" >/dev/null 2>&1; then
+            echo "Tag $VERSION already exists."
+            echo "skip=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Check release exists on GitHub API
+          RELEASE_URL="https://api.github.com/repos/${{ github.repository }}/releases/tags/$VERSION"
+          if curl -sf "$RELEASE_URL" >/dev/null; then
+            echo "Release $VERSION already exists."
+            echo "skip=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "No existing release or tag found."
+          echo "skip=false" >> $GITHUB_OUTPUT
+
+      - name: Stop workflow if release exists
+        if: steps.check_release.outputs.skip == 'true'
+        run: |
+          echo "Release already exists. Stopping workflow."
+          exit 0
+
+      # -------------------------------
+
       - name: Update Tauri pubkey
         env:
           TAURI_SIGNING_PUBLIC_KEY: ${{ secrets.TAURI_SIGNING_PUBLIC_KEY }}
         run: node scripts/update-tauri-pubkey.js
-      # End ----------------------------------
 
-      # Generate changelog start ----------------------------------
       - name: Generate Changelog
         id: generate_changelog
         if: matrix.platform == 'macos-latest'
         run: |
-          # Read and store changelog content
           CHANGELOG_CONTENT=$(cat CHANGELOG.md)
           echo "CHANGELOG<<EOF" >> $GITHUB_ENV
           echo "$CHANGELOG_CONTENT" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-      # End ----------------------------------
-      # Build and upload release
+
+      # Build & Release
       - uses: tauri-apps/tauri-action@v0
+        if: steps.check_release.outputs.skip != 'true'
         name: Build and upload release
         id: tauri_build
         timeout-minutes: 30

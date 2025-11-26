@@ -1,17 +1,21 @@
 import * as React from "react";
 
 import { AI_PROVIDER_CONFIG, LS_KEY_AI_API_KEY, LS_KEY_AI_BASE_URL, LS_KEY_AI_LANGUAGE, LS_KEY_AI_MODEL, LS_KEY_AI_PROVIDER, LS_KEY_AI_STREAM_ENABLED } from "@/lib/ai/providers";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Settings2Icon } from "lucide-react";
 import { Switch } from "../ui/switch";
 
 const KEYS_AI_PROVIDER = Object.keys(AI_PROVIDER_CONFIG);
 
-export function AIFeatureDialog() {
+interface AIFeatureDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export function AIFeatureDialog({ open, onOpenChange }: AIFeatureDialogProps) {
   const [aiProvider, setAiProvider] = React.useState<string>("");
   const [aiBaseUrl, setAiBaseUrl] = React.useState<string>("");
   const [aiApiKey, setAiApiKey] = React.useState<string>("");
@@ -37,7 +41,6 @@ export function AIFeatureDialog() {
   React.useEffect(() => {
     readAiSettingsFromStorage();
 
-
     const onAiSettingsChange = () => readAiSettingsFromStorage();
 
     window.addEventListener("aiSettingsChange", onAiSettingsChange as EventListener);
@@ -46,6 +49,13 @@ export function AIFeatureDialog() {
       window.removeEventListener("aiSettingsChange", onAiSettingsChange as EventListener);
     };
   }, [readAiSettingsFromStorage]);
+
+  // Load settings when dialog opens
+  React.useEffect(() => {
+    if (open) {
+      readAiSettingsFromStorage();
+    }
+  }, [open, readAiSettingsFromStorage]);
 
   const save = () => {
     if (typeof window === "undefined") return;
@@ -74,24 +84,16 @@ export function AIFeatureDialog() {
       if (streamEnabled) localStorage.setItem(LS_KEY_AI_STREAM_ENABLED, "true");
       else localStorage.removeItem(LS_KEY_AI_STREAM_ENABLED);
 
-
       window.dispatchEvent(new Event("aiSettingsChange"));
+      onOpenChange(false);
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error("AIFeatureDialog: failed to save AI settings", e);
     }
   };
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <div
-          className="flex cursor-pointer items-center gap-1 text-xs hover:bg-primary/10 px-1 py-0.5 rounded"
-        >
-          <Settings2Icon size={10} />
-          AI Settings
-        </div>
-      </DialogTrigger>
 
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>AI Settings</DialogTitle>
@@ -166,9 +168,7 @@ export function AIFeatureDialog() {
             <Button variant="ghost" size="sm">Cancel</Button>
           </DialogClose>
 
-          <DialogClose asChild>
-            <Button size="sm" onClick={save}>Save</Button>
-          </DialogClose>
+          <Button size="sm" onClick={save}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
