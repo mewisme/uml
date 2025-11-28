@@ -9,6 +9,7 @@ import Preview from './pages/Preview';
 import Test from './pages/Test';
 import { Toaster } from "@/components/ui/sonner"
 import UMLEditor from './pages/UMLEditor';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { initDB } from './databases/_db';
 import { useCategoryStore } from './stores/category';
 import { useContentCategoryStore } from './stores/contentCategory';
@@ -22,7 +23,13 @@ function App() {
   const loadContentCategories = useContentCategoryStore(state => state.loadData);
   const loadCategories = useCategoryStore(state => state.loadCategories);
 
+  const window = getCurrentWindow();
+
   useEffect(() => {
+    window.setFocus();
+    window.center().then(() => {
+      console.log("Window centered");
+    });
 
     console.log("Start initializing database")
     initDB()
@@ -37,7 +44,6 @@ function App() {
       })
       .catch((error) => {
         console.error('Failed to initialize database:', error);
-
       });
   }, []);
 
