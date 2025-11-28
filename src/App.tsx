@@ -26,7 +26,6 @@ function App() {
   const window = getCurrentWindow();
 
   useEffect(() => {
-    window.setFocus();
     window.center().then(() => {
       console.log("Window centered");
     });

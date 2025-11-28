@@ -12,16 +12,7 @@ pub fn run() {
                 .expect("no main window")
                 .set_focus();
         }))
-        .setup(|app| {
-            let salt_path = app
-                .path()
-                .app_local_data_dir()
-                .expect("Failed to get app local data dir")
-                .join("salt");
-            app.handle()
-                .plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())?;
-            Ok(())
-        })
+        .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())

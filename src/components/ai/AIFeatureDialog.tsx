@@ -3,7 +3,7 @@ import * as React from "react";
 import { AI_PROVIDER_CONFIG, SH_KEY_AI_API_KEY, SH_KEY_AI_BASE_URL, SH_KEY_AI_LANGUAGE, SH_KEY_AI_MODEL, SH_KEY_AI_PROVIDER, SH_KEY_AI_STREAM_ENABLED } from "@/lib/ai/providers";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { getAiSetting, removeAiSetting, setAiSetting } from "@/lib/ai/stronghold";
+import { getAiSetting, setAiSetting } from "@/lib/ai/store";
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -42,7 +42,7 @@ export function AIFeatureDialog({ open, onOpenChange }: AIFeatureDialogProps) {
       setStreamEnabled(streamEnabled === "true");
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.error("AIFeatureDialog: failed to read AI settings from Stronghold", e);
+      console.error("AIFeatureDialog: failed to read AI settings from store", e);
     }
   }, []);
 
@@ -66,7 +66,9 @@ export function AIFeatureDialog({ open, onOpenChange }: AIFeatureDialogProps) {
   }, [open, readAiSettingsFromStorage]);
 
   const save = async () => {
-    if (typeof window === "undefined") return;
+    // eslint-disable-next-line no-console
+    console.log("AIFeatureDialog: save function called");
+
     const provider = aiProvider.trim();
     const baseUrl = aiBaseUrl.trim();
     const apiKey = aiApiKey.trim();
@@ -74,24 +76,35 @@ export function AIFeatureDialog({ open, onOpenChange }: AIFeatureDialogProps) {
     const lang = language.trim();
 
     try {
-      if (provider === "") await removeAiSetting(SH_KEY_AI_PROVIDER);
-      else await setAiSetting(SH_KEY_AI_PROVIDER, provider);
+      // eslint-disable-next-line no-console
+      console.log("AIFeatureDialog: starting to save settings", { provider, baseUrl, model, lang, streamEnabled });
 
-      if (baseUrl === "") await removeAiSetting(SH_KEY_AI_BASE_URL);
-      else await setAiSetting(SH_KEY_AI_BASE_URL, baseUrl);
+      await setAiSetting(SH_KEY_AI_PROVIDER, provider);
+      // eslint-disable-next-line no-console
+      console.log("AIFeatureDialog: saved provider", provider);
 
-      if (apiKey === "") await removeAiSetting(SH_KEY_AI_API_KEY);
-      else await setAiSetting(SH_KEY_AI_API_KEY, apiKey);
+      await setAiSetting(SH_KEY_AI_BASE_URL, baseUrl);
+      // eslint-disable-next-line no-console
+      console.log("AIFeatureDialog: saved baseUrl", baseUrl);
 
-      if (model === "") await removeAiSetting(SH_KEY_AI_MODEL);
-      else await setAiSetting(SH_KEY_AI_MODEL, model);
+      await setAiSetting(SH_KEY_AI_API_KEY, apiKey);
+      // eslint-disable-next-line no-console
+      console.log("AIFeatureDialog: saved apiKey", apiKey ? "***" : "(empty)");
 
-      if (lang === "") await removeAiSetting(SH_KEY_AI_LANGUAGE);
-      else await setAiSetting(SH_KEY_AI_LANGUAGE, lang);
+      await setAiSetting(SH_KEY_AI_MODEL, model);
+      // eslint-disable-next-line no-console
+      console.log("AIFeatureDialog: saved model", model);
 
-      if (streamEnabled) await setAiSetting(SH_KEY_AI_STREAM_ENABLED, "true");
-      else await removeAiSetting(SH_KEY_AI_STREAM_ENABLED);
+      await setAiSetting(SH_KEY_AI_LANGUAGE, lang);
+      // eslint-disable-next-line no-console
+      console.log("AIFeatureDialog: saved lang", lang);
 
+      await setAiSetting(SH_KEY_AI_STREAM_ENABLED, streamEnabled ? "true" : "false");
+      // eslint-disable-next-line no-console
+      console.log("AIFeatureDialog: saved streamEnabled", streamEnabled);
+
+      // eslint-disable-next-line no-console
+      console.log("AIFeatureDialog: all settings saved successfully");
       window.dispatchEvent(new Event("aiSettingsChange"));
       onOpenChange(false);
     } catch (e) {
@@ -112,9 +125,9 @@ export function AIFeatureDialog({ open, onOpenChange }: AIFeatureDialogProps) {
           <div className="flex items-end gap-2 w-full">
             <div className="grid gap-2 flex-1">
               <label className="text-xs">AI Provider</label>
-              <Select value={aiProvider} onValueChange={setAiProvider}>
+              <Select value={aiProvider} onValueChange={setAiProvider} defaultValue="openai">
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select an AI provider" />
+                  <SelectValue placeholder="OpenAI" />
                 </SelectTrigger>
                 <SelectContent>
                   {KEYS_AI_PROVIDER.map((provider) => (
@@ -129,9 +142,9 @@ export function AIFeatureDialog({ open, onOpenChange }: AIFeatureDialogProps) {
               {aiProvider === 'custom' ? (
                 <Input value={aiModel} onChange={(e) => setAiModel(e.target.value)} placeholder="Enter a custom model" />
               ) : (
-                <Select value={aiModel} onValueChange={setAiModel}>
+                <Select value={aiModel} onValueChange={setAiModel} defaultValue="gpt-4o">
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select an AI model" />
+                    <SelectValue placeholder="gpt-4o" />
                   </SelectTrigger>
                   <SelectContent>
                     {AI_PROVIDER_CONFIG[aiProvider as keyof typeof AI_PROVIDER_CONFIG]?.models.map((model) => (
@@ -143,9 +156,9 @@ export function AIFeatureDialog({ open, onOpenChange }: AIFeatureDialogProps) {
             </div>
             <div className="grid gap-2 flex-1">
               <label className="text-xs">Language</label>
-              <Select value={language} onValueChange={setLanguage}>
+              <Select value={language} onValueChange={setLanguage} defaultValue="en">
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a language" />
+                  <SelectValue placeholder="English" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="en">English</SelectItem>
@@ -176,7 +189,7 @@ export function AIFeatureDialog({ open, onOpenChange }: AIFeatureDialogProps) {
             <Button variant="ghost" size="sm">Cancel</Button>
           </DialogClose>
 
-          <Button size="sm" onClick={save}>Save</Button>
+          <Button type="button" size="sm" onClick={save}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

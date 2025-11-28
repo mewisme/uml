@@ -18,7 +18,7 @@ import {
   PromptInputTools,
 } from '@/components/ui/shadcn-io/ai/prompt-input'
 import { UIMessage, useChat } from "@ai-sdk/react";
-import { removeAiSetting, setAiSetting } from '@/lib/ai/stronghold';
+import { removeAiSetting, setAiSetting } from '@/lib/ai/store';
 import { useChatMessages, useCurrentChatId, useSetChatMessages, useSetCurrentChatId } from "@/stores/chat";
 import { useEffect, useMemo, useRef, useState } from "react";
 

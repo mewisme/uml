@@ -10,7 +10,7 @@ import {
 import { useEffect, useState } from "react";
 
 import { defaultSettingsMaterialDark } from "@uiw/codemirror-theme-material";
-import { getAiSetting } from "@/lib/ai/stronghold";
+import { getAiSetting } from "@/lib/ai/store";
 import { useTheme } from "next-themes";
 
 const DEFAULT_PREVIEW_DARK = "https://www.plantuml.com/plantuml/d";
@@ -71,7 +71,7 @@ export function useBackground(): {
       setUserStreamEnabled(streamEnabled === "true");
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.error("useBackground: failed to read AI settings from Stronghold", e);
+      console.error("useBackground: failed to read AI settings from store", e);
     }
   }
 
