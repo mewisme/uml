@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { AI_PROVIDER_CONFIG, LS_KEY_AI_API_KEY, LS_KEY_AI_BASE_URL, LS_KEY_AI_LANGUAGE, LS_KEY_AI_MODEL, LS_KEY_AI_PROVIDER, LS_KEY_AI_STREAM_ENABLED } from "@/lib/ai/providers";
+import { AI_PROVIDER_CONFIG, SH_KEY_AI_API_KEY, SH_KEY_AI_BASE_URL, SH_KEY_AI_LANGUAGE, SH_KEY_AI_MODEL, SH_KEY_AI_PROVIDER, SH_KEY_AI_STREAM_ENABLED } from "@/lib/ai/providers";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { getAiSetting, removeAiSetting, setAiSetting } from "@/lib/ai/stronghold";
@@ -27,12 +27,12 @@ export function AIFeatureDialog({ open, onOpenChange }: AIFeatureDialogProps) {
   const readAiSettingsFromStorage = React.useCallback(async () => {
     if (typeof window === "undefined") return;
     try {
-      const provider = await getAiSetting(LS_KEY_AI_PROVIDER);
-      const baseUrl = await getAiSetting(LS_KEY_AI_BASE_URL);
-      const apiKey = await getAiSetting(LS_KEY_AI_API_KEY);
-      const model = await getAiSetting(LS_KEY_AI_MODEL);
-      const lang = await getAiSetting(LS_KEY_AI_LANGUAGE);
-      const streamEnabled = await getAiSetting(LS_KEY_AI_STREAM_ENABLED);
+      const provider = await getAiSetting(SH_KEY_AI_PROVIDER);
+      const baseUrl = await getAiSetting(SH_KEY_AI_BASE_URL);
+      const apiKey = await getAiSetting(SH_KEY_AI_API_KEY);
+      const model = await getAiSetting(SH_KEY_AI_MODEL);
+      const lang = await getAiSetting(SH_KEY_AI_LANGUAGE);
+      const streamEnabled = await getAiSetting(SH_KEY_AI_STREAM_ENABLED);
 
       setAiProvider(provider ?? "openai");
       setAiBaseUrl(baseUrl ?? "");
@@ -74,23 +74,23 @@ export function AIFeatureDialog({ open, onOpenChange }: AIFeatureDialogProps) {
     const lang = language.trim();
 
     try {
-      if (provider === "") await removeAiSetting(LS_KEY_AI_PROVIDER);
-      else await setAiSetting(LS_KEY_AI_PROVIDER, provider);
+      if (provider === "") await removeAiSetting(SH_KEY_AI_PROVIDER);
+      else await setAiSetting(SH_KEY_AI_PROVIDER, provider);
 
-      if (baseUrl === "") await removeAiSetting(LS_KEY_AI_BASE_URL);
-      else await setAiSetting(LS_KEY_AI_BASE_URL, baseUrl);
+      if (baseUrl === "") await removeAiSetting(SH_KEY_AI_BASE_URL);
+      else await setAiSetting(SH_KEY_AI_BASE_URL, baseUrl);
 
-      if (apiKey === "") await removeAiSetting(LS_KEY_AI_API_KEY);
-      else await setAiSetting(LS_KEY_AI_API_KEY, apiKey);
+      if (apiKey === "") await removeAiSetting(SH_KEY_AI_API_KEY);
+      else await setAiSetting(SH_KEY_AI_API_KEY, apiKey);
 
-      if (model === "") await removeAiSetting(LS_KEY_AI_MODEL);
-      else await setAiSetting(LS_KEY_AI_MODEL, model);
+      if (model === "") await removeAiSetting(SH_KEY_AI_MODEL);
+      else await setAiSetting(SH_KEY_AI_MODEL, model);
 
-      if (lang === "") await removeAiSetting(LS_KEY_AI_LANGUAGE);
-      else await setAiSetting(LS_KEY_AI_LANGUAGE, lang);
+      if (lang === "") await removeAiSetting(SH_KEY_AI_LANGUAGE);
+      else await setAiSetting(SH_KEY_AI_LANGUAGE, lang);
 
-      if (streamEnabled) await setAiSetting(LS_KEY_AI_STREAM_ENABLED, "true");
-      else await removeAiSetting(LS_KEY_AI_STREAM_ENABLED);
+      if (streamEnabled) await setAiSetting(SH_KEY_AI_STREAM_ENABLED, "true");
+      else await removeAiSetting(SH_KEY_AI_STREAM_ENABLED);
 
       window.dispatchEvent(new Event("aiSettingsChange"));
       onOpenChange(false);

@@ -1,12 +1,12 @@
 ## What's Changed
 
-♻️ Refactoring
+✨ Features
 
-- Encapsulate creation flag logic for Git commands ([a24f4b6](../../commit/a24f4b6))
+- Integrate Stronghold for AI settings management ([17f2f04](../../commit/17f2f04))
 
 🔨 Other Changes
 
-- Update version to 0.1.1 and modify changelog ([4fc696a](../../commit/4fc696a))
+- Update version to 0.1.2 and modify changelog ([b768a5e](../../commit/b768a5e))
 
 
-📋 Full Changelog: [4fc696a...a24f4b6](../../compare/4fc696a...a24f4b6)
+📋 Full Changelog: [b768a5e...17f2f04](../../compare/b768a5e...17f2f04)

@@ -1,8 +1,16 @@
-import { LS_KEY_AI_API_KEY, LS_KEY_AI_BASE_URL, LS_KEY_AI_LANGUAGE, LS_KEY_AI_MODEL, LS_KEY_AI_PROVIDER, LS_KEY_AI_STREAM_ENABLED, Language } from "@/lib/ai/providers";
-import { getAiSetting } from "@/lib/ai/stronghold";
+import {
+  Language,
+  SH_KEY_AI_API_KEY,
+  SH_KEY_AI_BASE_URL,
+  SH_KEY_AI_LANGUAGE,
+  SH_KEY_AI_MODEL,
+  SH_KEY_AI_PROVIDER,
+  SH_KEY_AI_STREAM_ENABLED
+} from "@/lib/ai/providers";
 import { useEffect, useState } from "react";
 
 import { defaultSettingsMaterialDark } from "@uiw/codemirror-theme-material";
+import { getAiSetting } from "@/lib/ai/stronghold";
 import { useTheme } from "next-themes";
 
 const DEFAULT_PREVIEW_DARK = "https://www.plantuml.com/plantuml/d";
@@ -48,12 +56,12 @@ export function useBackground(): {
   const readAiSettingsFromStorage = async () => {
     if (typeof window === "undefined") return;
     try {
-      const provider = await getAiSetting(LS_KEY_AI_PROVIDER);
-      const apiKey = await getAiSetting(LS_KEY_AI_API_KEY);
-      const model = await getAiSetting(LS_KEY_AI_MODEL);
-      const baseUrl = await getAiSetting(LS_KEY_AI_BASE_URL);
-      const language = await getAiSetting(LS_KEY_AI_LANGUAGE);
-      const streamEnabled = await getAiSetting(LS_KEY_AI_STREAM_ENABLED);
+      const provider = await getAiSetting(SH_KEY_AI_PROVIDER);
+      const apiKey = await getAiSetting(SH_KEY_AI_API_KEY);
+      const model = await getAiSetting(SH_KEY_AI_MODEL);
+      const baseUrl = await getAiSetting(SH_KEY_AI_BASE_URL);
+      const language = await getAiSetting(SH_KEY_AI_LANGUAGE);
+      const streamEnabled = await getAiSetting(SH_KEY_AI_STREAM_ENABLED);
 
       setUserAiProvider(provider);
       setUserAiApiKey(apiKey);

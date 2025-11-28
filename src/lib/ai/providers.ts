@@ -70,9 +70,9 @@ export const AI_PROVIDER_CONFIG: Record<AIProvider, AIProviderConfig> = {
 }
 
 
-export const LS_KEY_AI_PROVIDER = "AI_PROVIDER";
-export const LS_KEY_AI_API_KEY = "AI_API_KEY";
-export const LS_KEY_AI_MODEL = "AI_MODEL";
-export const LS_KEY_AI_BASE_URL = "AI_BASE_URL";
-export const LS_KEY_AI_LANGUAGE = "AI_LANGUAGE";
-export const LS_KEY_AI_STREAM_ENABLED = "AI_STREAM_ENABLED";
+export const SH_KEY_AI_PROVIDER = "AI_PROVIDER";
+export const SH_KEY_AI_API_KEY = "AI_API_KEY";
+export const SH_KEY_AI_MODEL = "AI_MODEL";
+export const SH_KEY_AI_BASE_URL = "AI_BASE_URL";
+export const SH_KEY_AI_LANGUAGE = "AI_LANGUAGE";
+export const SH_KEY_AI_STREAM_ENABLED = "AI_STREAM_ENABLED";

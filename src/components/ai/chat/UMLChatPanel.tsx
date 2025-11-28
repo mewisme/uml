@@ -1,5 +1,4 @@
-import { AI_PROVIDER_CONFIG, LS_KEY_AI_MODEL } from '@/lib/ai/providers';
-import { removeAiSetting, setAiSetting } from '@/lib/ai/stronghold';
+import { AI_PROVIDER_CONFIG, SH_KEY_AI_MODEL } from '@/lib/ai/providers';
 import {
   Conversation,
   ConversationContent,
@@ -19,6 +18,7 @@ import {
   PromptInputTools,
 } from '@/components/ui/shadcn-io/ai/prompt-input'
 import { UIMessage, useChat } from "@ai-sdk/react";
+import { removeAiSetting, setAiSetting } from '@/lib/ai/stronghold';
 import { useChatMessages, useCurrentChatId, useSetChatMessages, useSetCurrentChatId } from "@/stores/chat";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -156,9 +156,9 @@ function ChatContent({ onApplyChanges, transport, aiProvider, aiModel }: { onApp
     try {
       const model = newModel.trim();
       if (model === "") {
-        await removeAiSetting(LS_KEY_AI_MODEL);
+        await removeAiSetting(SH_KEY_AI_MODEL);
       } else {
-        await setAiSetting(LS_KEY_AI_MODEL, model);
+        await setAiSetting(SH_KEY_AI_MODEL, model);
       }
 
       window.dispatchEvent(new Event("aiSettingsChange"));
