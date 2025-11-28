@@ -1,12 +1,12 @@
 ## What's Changed
 
-✨ Features
+♻️ Refactoring
 
-- Implement single instance plugin and enhance window management ([53bea86](../../commit/53bea86))
+- Migrate from Stronghold to Store for AI settings management ([89f4bc0](../../commit/89f4bc0))
 
 🔨 Other Changes
 
-- Update version to 0.2.0 and modify changelog ([032f94b](../../commit/032f94b))
+- Update version to 0.3.0 and modify changelog ([323af7e](../../commit/323af7e))
 
 
-📋 Full Changelog: [032f94b...53bea86](../../compare/032f94b...53bea86)
+📋 Full Changelog: [323af7e...89f4bc0](../../compare/323af7e...89f4bc0)
