@@ -2,11 +2,11 @@
 
 ✨ Features
 
-- Integrate Stronghold for AI settings management ([17f2f04](../../commit/17f2f04))
+- Implement single instance plugin and enhance window management ([53bea86](../../commit/53bea86))
 
 🔨 Other Changes
 
-- Update version to 0.1.2 and modify changelog ([b768a5e](../../commit/b768a5e))
+- Update version to 0.2.0 and modify changelog ([032f94b](../../commit/032f94b))
 
 
-📋 Full Changelog: [b768a5e...17f2f04](../../compare/b768a5e...17f2f04)
+📋 Full Changelog: [032f94b...53bea86](../../compare/032f94b...53bea86)
