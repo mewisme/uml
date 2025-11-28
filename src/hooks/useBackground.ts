@@ -1,4 +1,5 @@
 import { LS_KEY_AI_API_KEY, LS_KEY_AI_BASE_URL, LS_KEY_AI_LANGUAGE, LS_KEY_AI_MODEL, LS_KEY_AI_PROVIDER, LS_KEY_AI_STREAM_ENABLED, Language } from "@/lib/ai/providers";
+import { getAiSetting } from "@/lib/ai/stronghold";
 import { useEffect, useState } from "react";
 
 import { defaultSettingsMaterialDark } from "@uiw/codemirror-theme-material";
@@ -44,18 +45,25 @@ export function useBackground(): {
     }
   };
 
-  const readAiSettingsFromStorage = () => {
+  const readAiSettingsFromStorage = async () => {
     if (typeof window === "undefined") return;
     try {
-      setUserAiProvider(localStorage.getItem(LS_KEY_AI_PROVIDER));
-      setUserAiApiKey(localStorage.getItem(LS_KEY_AI_API_KEY));
-      setUserAiModel(localStorage.getItem(LS_KEY_AI_MODEL));
-      setUserAiBaseUrl(localStorage.getItem(LS_KEY_AI_BASE_URL));
-      setUserAiLanguage(localStorage.getItem(LS_KEY_AI_LANGUAGE) ?? "en");
-      setUserStreamEnabled(localStorage.getItem(LS_KEY_AI_STREAM_ENABLED) === "true");
+      const provider = await getAiSetting(LS_KEY_AI_PROVIDER);
+      const apiKey = await getAiSetting(LS_KEY_AI_API_KEY);
+      const model = await getAiSetting(LS_KEY_AI_MODEL);
+      const baseUrl = await getAiSetting(LS_KEY_AI_BASE_URL);
+      const language = await getAiSetting(LS_KEY_AI_LANGUAGE);
+      const streamEnabled = await getAiSetting(LS_KEY_AI_STREAM_ENABLED);
+
+      setUserAiProvider(provider);
+      setUserAiApiKey(apiKey);
+      setUserAiModel(model);
+      setUserAiBaseUrl(baseUrl);
+      setUserAiLanguage(language ?? "en");
+      setUserStreamEnabled(streamEnabled === "true");
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.error("useBackground: failed to read AI settings from localStorage", e);
+      console.error("useBackground: failed to read AI settings from Stronghold", e);
     }
   }
 

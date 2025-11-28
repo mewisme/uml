@@ -1,4 +1,5 @@
 import { AI_PROVIDER_CONFIG, LS_KEY_AI_MODEL } from '@/lib/ai/providers';
+import { removeAiSetting, setAiSetting } from '@/lib/ai/stronghold';
 import {
   Conversation,
   ConversationContent,
@@ -149,15 +150,15 @@ function ChatContent({ onApplyChanges, transport, aiProvider, aiModel }: { onApp
     setSelectedModel(aiModel);
   }, [aiModel]);
 
-  const handleModelChange = (newModel: string) => {
+  const handleModelChange = async (newModel: string) => {
     if (typeof window === "undefined") return;
 
     try {
       const model = newModel.trim();
       if (model === "") {
-        localStorage.removeItem(LS_KEY_AI_MODEL);
+        await removeAiSetting(LS_KEY_AI_MODEL);
       } else {
-        localStorage.setItem(LS_KEY_AI_MODEL, model);
+        await setAiSetting(LS_KEY_AI_MODEL, model);
       }
 
       window.dispatchEvent(new Event("aiSettingsChange"));

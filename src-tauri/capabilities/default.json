@@ -50,6 +50,7 @@
           "url": "https://www.plantuml.com/*"
         }
       ]
-    }
+    },
+    "stronghold:default"
   ]
 }

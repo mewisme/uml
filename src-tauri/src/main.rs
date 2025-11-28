@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    odoflow_agent_lib::run()
+    uml_editor_lib::run()
 }

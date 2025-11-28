@@ -25,6 +25,8 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "publisher": "CN=mewisme",
+    "copyright": "Copyright © 2025 Mew",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -36,7 +38,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IENDOUExMzhCRUE4MDdBQTgKUldTb2VvRHFpeE9helBNMTU4Skc2M3E0cmcrREVOTFdraWV6R3pGelFrODBBVlArc2xpdXhrY2wK",
+      "pubkey": "provider-public-key-here",
       "endpoints": [
         "https://github.com/mewisme/uml/releases/latest/download/latest.json"
       ]
